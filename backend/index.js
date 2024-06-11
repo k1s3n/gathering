@@ -1,19 +1,25 @@
-const express = require("express");
-const { connectToMongoDB } = require("./server/server");
-const userController = require("./controller/userController");
-
+const dotenv = require('dotenv');
+dotenv.config();
+const userController = require('./controller/userController');
+const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const routes = require('./routes'); // New protected routes
 const app = express();
+const port = process.env.PORT || 4000;
 
+app.use(bodyParser.json());
 
-connectToMongoDB();
+console.log('MONGO_URI:', process.env.MONGO_URI); // Debug log to check if MONGO_URI is loaded
+console.log('JWT_SECRET:', process.env.JWT_SECRET); // Debug log to check if JWT_SECRET is loaded
 
-userController.createEvent("66672c4b67b0dad04feb747e", {title: "test", description: "test"});
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('Connected to MongoDB'))
+  .catch(error => console.error('Error connecting to MongoDB:', error));
 
+// Routes
+app.use('/', routes);
 
-
-app.get("/", (req, res) => {
-    res.send("backend runs on port 4000");
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });
-
-const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => console.log(`Backend Server running on port http://localhost:${PORT}`));

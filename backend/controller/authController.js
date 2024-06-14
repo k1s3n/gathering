@@ -22,8 +22,9 @@ async function authenticateUser(req, res) {
     // Generate JWT
     const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '1h' });
 
-    res.json({ token });
+    res.json({ token});
   } catch (error) {
+    console.error('Error authenticating user:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 }

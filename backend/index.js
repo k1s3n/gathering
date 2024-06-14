@@ -4,11 +4,14 @@ const userController = require('./controller/userController');
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const routes = require('./routes'); // New protected routes
 const app = express();
 const port = process.env.PORT || 4000;
 
 app.use(bodyParser.json());
+
+app.use(cors());
 
 console.log('MONGO_URI:', process.env.MONGO_URI); // Debug log to check if MONGO_URI is loaded
 console.log('JWT_SECRET:', process.env.JWT_SECRET); // Debug log to check if JWT_SECRET is loaded

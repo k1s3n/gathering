@@ -1,0 +1,30 @@
+version: '3'
+
+tasks:
+  default:
+    cmds:
+      - task --list
+    silent: true
+    description: "Show available tasks"
+  
+  start:
+    desc: "start mongodb"
+    cmds:
+      - docker start mongodb
+  
+  stop:
+    desc: "stop mongodb"
+    cmds:
+      - docker stop mongodb
+  
+  backend:
+    desc: "Start backend in a new terminal"
+    cmds:
+      #- code -r -e "workbench.action.tasks.runTask" --args "Start Backend"
+      - powershell -ExecutionPolicy Bypass -File ./start-backend.ps1
+
+  frontend:
+    desc: "Start frontend in a new terminal"
+    cmds:
+      #- code -r -e "workbench.action.tasks.runTask" --args "Start Backend"
+      - powershell -ExecutionPolicy Bypass -File ./start-frontend.ps1

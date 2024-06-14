@@ -10,7 +10,11 @@ router.post('/login', authController.authenticateUser);
 // Define user routes
 router.post('/register', userController.createUser);
 
-router.post('/createEvent', userController.createEvent);
+router.post('/createEvent', authenticateToken,userController.createEvent);
+
+router.get('/events', userController.getEvents);
+
+router.get('/userinfo', authenticateToken, userController.getUserInfo);
 
 // Define protected routes
 router.get('/protected', authenticateToken, (req, res) => {

@@ -1,3 +1,7 @@
+*.yml
+*.ps1
+
+
 # Logs
 logs
 *.log

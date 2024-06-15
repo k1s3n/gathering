@@ -57,13 +57,20 @@ const Register = () => {
 
   return (
     <div>
+    <h3>Register</h3>
     <form onSubmit={handleSubmit}>
-      <input type="text" name="username" placeholder="Username" onChange={handleChange} required />
-      <input type="password" name="password" placeholder="Password" onChange={handleChange} required />
       <input type="email" name="email" placeholder="Email" onChange={handleChange} required />
+      <br></br>
+      <input type="password" name="password" placeholder="Password" onChange={handleChange} required />
+      <br></br>
+      <input type="text" name="username" placeholder="Username" onChange={handleChange} required />
+      <br></br>
       <input type="text" name="phone" placeholder="Phone" onChange={handleChange} />
+      <br></br>
       <input type="text" name="firstname" placeholder="First Name" onChange={handleChange} />
+      <br></br>
       <input type="text" name="lastname" placeholder="Last Name" onChange={handleChange} />
+      <br></br>
       <button type="submit">Register</button>
     </form>
       {message && <div>{message}</div>} {/* Display message if not empty */}

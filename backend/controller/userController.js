@@ -80,6 +80,8 @@ const getUserInfo = async (req, res) => {
       userId: user._id,
       username: user.username,
       email: user.email,
+      firstname: user.firstname,
+      lastname: user.lastname,
       // Andra användarattribut som du vill returnera
     });
   } catch (error) {
@@ -88,6 +90,38 @@ const getUserInfo = async (req, res) => {
   }
 };
 
+const updateUserInfo = async (req, res) => {
+  const { username, email, phone, firstname, lastname } = req.body;
+  try {
+    const user = await User.findById(req.user.userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    user.username = username || user.username;
+    user.email = email || user.email;
+    user.phone = phone || user.phone;
+    user.firstname = firstname || user.firstname;
+    user.lastname = lastname || user.lastname;
+    await user.save();
+
+    const updatedUser = await User.findById(req.user.userId);
+
+    res.json({
+      message: 'User updated successfully',
+      user: {
+        userId: updatedUser._id,
+        username: updatedUser.username,
+        email: updatedUser.email,
+        phone: updatedUser.phone,
+        firstname: updatedUser.firstname,
+        lastname: updatedUser.lastname
+      }
+    });
+  } catch (error) {
+    console.error('Error updating user info:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
 
 
 
@@ -96,6 +130,7 @@ module.exports = {
     createUser,
     createEvent,
     getEvents,
-    getUserInfo
+    getUserInfo,
+    updateUserInfo
 
   };

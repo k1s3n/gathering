@@ -32,6 +32,8 @@ const CreateEvent = () => {
   };
 
   return (
+    <div>
+    <h3>Create Event</h3>
     <form onSubmit={handleSubmit}>
       <input type="text" name="title" placeholder="Title" onChange={handleChange} required />
       <input type="text" name="description" placeholder="Description" onChange={handleChange} required />
@@ -40,6 +42,7 @@ const CreateEvent = () => {
       <input type="time" name="time" onChange={handleChange} required />
       <button type="submit">Create Event</button>
     </form>
+    </div>
   );
 };
 

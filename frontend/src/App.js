@@ -6,6 +6,7 @@ import Register from './components/Register';
 import CreateEvent from './components/CreateEvent';
 import { AuthProvider, useAuth } from './AuthContext';
 import './index.css';
+import Profile from './components/Profile';
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
           <Route path="/login" element={<Login />} /> {/* Inga props behövs */}
           <Route path="/register" element={<Register />} />
           <Route path="/createEvent" element={<ProtectedRoute><CreateEvent /></ProtectedRoute>} />
+          <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         </Routes>
       </Router>
     </AuthProvider>

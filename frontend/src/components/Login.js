@@ -31,9 +31,12 @@ const Login = () => {
 
   return (
     <div>
+      <h3>Sign In</h3>
       <form onSubmit={handleSubmit}>
         <input type="text" name="email" placeholder="Email" onChange={handleChange} required />
+        <br></br>
         <input type="password" name="password" placeholder="Password" onChange={handleChange} required />
+        <br></br>
         <button type="submit">Login</button>
       </form>
       {message && <div>{message}</div>}

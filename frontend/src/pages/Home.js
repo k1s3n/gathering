@@ -5,16 +5,16 @@ import Login from '../components/Login';
 import Logout from '../components/Logout';
 import Register from '../components/Register';
 import CreateEvent from '../components/CreateEvent';
+import Profile from '../components/Profile';
 import { formatDate, formatDateTime } from '../components/timeconverter';
 
 const Home = () => {
-  const { token, userId } = useAuth();
+  const { token, userId, userInfo } = useAuth();
   const [events, setEvents] = useState([]);
-  const [userInfo, setUserInfo] = useState(null);
   const [showCreateEvent, setShowCreateEvent] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
-
+  const [showProfile, setShowProfile] = useState(false);
   console.log('Token:', token);
   console.log('User ID:', userId);
   console.log('User Info:', userInfo);
@@ -31,27 +31,6 @@ const Home = () => {
     fetchEvents();
   }, []);
 
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      if (token) {
-        try {
-          const userData = await API.get('/userinfo', 
-            { headers: { Authorization: `Bearer ${token}` } }
-          );
-          if (!userData) {
-            console.error('Error fetching user info: Empty response');
-            return;
-          }
-          setUserInfo(userData.data);
-        } catch (error) {
-          console.error('Error fetching user info:', error);
-        }
-      }
-    };
-
-    fetchUserInfo();
-  }, [token]);
-
   const handleLoginClick = () => {
     setShowLogin(!showLogin);
     setShowRegister(false);
@@ -59,6 +38,7 @@ const Home = () => {
 
   const handleCreateEventClick = () => {
     setShowCreateEvent(!showCreateEvent);
+    setShowProfile(false);
   };
 
   const handleRegisterClick = () => {
@@ -66,23 +46,27 @@ const Home = () => {
     setShowLogin(false);
   };
 
+  const handleProfileClick = () => {
+    setShowProfile(!showProfile);
+    setShowCreateEvent(false);
+  };
+
   return (
     <div>
       {token ? (
         <>
           {userInfo ? (
-            <>
             <h1>Welcome [{userInfo.username}]</h1>
-            
-        
-            </>
           ) : (
             <p>Loading user info...</p>
           )}
           <button onClick={handleCreateEventClick}>
             {showCreateEvent ? 'Cancel' : 'Create Event'}
           </button>
-          <button margin="20px">
+          <button onClick={handleProfileClick}>
+            {showProfile ? 'Cancel' : 'Profile'}
+          </button>
+          <button>
             <Logout />
           </button>
         </>
@@ -101,6 +85,7 @@ const Home = () => {
           {showLogin && <Login />}
         </>
       )}
+      {showProfile && <Profile />}
       {showCreateEvent && <CreateEvent />}
 
       <h2>Events</h2>

@@ -16,6 +16,8 @@ router.get('/events', userController.getEvents);
 
 router.get('/userinfo', authenticateToken, userController.getUserInfo);
 
+router.put('/userinfo', authenticateToken, userController.updateUserInfo);
+
 // Define protected routes
 router.get('/protected', authenticateToken, (req, res) => {
   res.json({ message: 'This is a protected route', user: req.user });

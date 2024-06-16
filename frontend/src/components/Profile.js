@@ -55,7 +55,7 @@ const Profile = () => {
       {userInfo ? (
         <>
           <div>
-            <label>Email: </label>
+          <label htmlFor="email">Email: </label>
             {editMode === 'email' ? (
               <>
                 <input
@@ -74,7 +74,7 @@ const Profile = () => {
             )}
           </div>
           <div>
-            <label>First Name: </label>
+          <label htmlFor="firstname">First Name: </label>
             {editMode === 'firstname' ? (
               <>
                 <input
@@ -93,7 +93,7 @@ const Profile = () => {
             )}
           </div>
           <div>
-            <label>Last Name: </label>
+          <label htmlFor="lastname">Last Name: </label>
             {editMode === 'lastname' ? (
               <>
                 <input
@@ -112,7 +112,7 @@ const Profile = () => {
             )}
           </div>
           <div>
-            <label>Phone: </label>
+          <label htmlFor="phone">Phone: </label>
             {editMode === 'phone' ? (
               <>
                 <input

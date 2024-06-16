@@ -85,6 +85,7 @@ const getUserInfo = async (req, res) => {
       email: user.email,
       firstname: user.firstname,
       lastname: user.lastname,
+      phone: user.phone,
       // Andra användarattribut som du vill returnera
     });
   } catch (error) {
@@ -102,7 +103,7 @@ const getUserPosts = async (req, res) => {
 
     const posts = await Event.find({ createdBy: user._id });
     const count = posts.length;
-    const sortedPosts = posts.sort((a, b) => new Date(b.postCreated) - new Date(a.postCreated));
+    const sortedPosts = posts.tosorted((a, b) => new Date(b.postCreated) - new Date(a.postCreated));
 
     res.json({
       posts,

@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useAuth } from '../AuthContext';
 
 const UserPosts = () => {
-  const { posts, postCount, latestPost, fetchUserPosts } = useAuth();
+  const { posts, postCount, latestPost, fetchUserPosts, userInfo } = useAuth();
 
   useEffect(() => {
     fetchUserPosts();
@@ -13,27 +13,30 @@ const UserPosts = () => {
   }
 
   return (
-    <div>
-      <h3>User Posts</h3>
-      {posts.length > 0 ? (
-        posts.map((post) => (
-          <div key={post._id}>
-            <h4>{post.title}</h4>
-            <p>{post.description}</p>
-            <p>{new Date(post.date).toLocaleDateString()}</p>
-          </div>
-        ))
-      ) : (
-        <p>No posts found</p>
-      )}
-      <p>Total Posts: {postCount}</p>
+    <div style={{marginLeft: '20px'}}>
+      <p style={{fontWeight: 'bold'}}>Total Posts: {postCount}</p>
       {latestPost && (
         <div>
-          <h4>Latest Post</h4>
+          <h4> Latest Post</h4>
           <p>{latestPost.title}</p>
           <p>{latestPost.description}</p>
           <p>{new Date(latestPost.date).toLocaleDateString()}</p>
         </div>
+      )}
+      -----------
+      <h3>{userInfo.username}s Posts</h3>
+      {posts.length > 0 ? (
+        posts.map((post) => (
+          <div key={post._id}>
+            <h4>{post.title}</h4>
+            <p>{post.location}</p>
+            <p>{post.description}</p>
+            <p>{new Date(post.date).toLocaleDateString()}</p>
+            ---------------------
+          </div>
+        ))
+      ) : (
+        <p>No posts found</p>
       )}
     </div>
   );

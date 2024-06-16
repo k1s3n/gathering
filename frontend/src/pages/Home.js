@@ -8,11 +8,12 @@ import CreateEvent from '../components/CreateEvent';
 import Profile from '../components/Profile';
 import CalendarComponent from '../components/CalendarComponent';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
+import { Link } from 'react-router-dom';
 import '../Home.css';
 import '../css/calendar.css';
 
 const Home = () => {
-  const { token, userId, userInfo } = useAuth();
+  const { token, userId, userInfo, resetShowStateFlag} = useAuth();
   const [events, setEvents] = useState([]);
   const [showCreateEvent, setShowCreateEvent] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
@@ -24,10 +25,11 @@ const Home = () => {
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
 
-
-  console.log('Token:', token);
-  console.log('User ID:', userId);
-  console.log('User Info:', userInfo);
+  useEffect(() => {
+    setShowCalendar(false);
+    setShowCreateEvent(false);
+    setShowProfile(false);
+  }, [resetShowStateFlag]);
   
   useEffect(() => {
     const fetchEvents = async () => {
@@ -121,10 +123,14 @@ const Home = () => {
           <button onClick={handleCalendarClick}>
             {showCalendar ? 'Cancel' : 'Calendar'}
           </button>
-
           {/*Show login and register components based on their state */}
           {showRegister && <Register />}
           {showLogin && <Login />}
+          {!showLogin && (
+            <p>
+              You must be logged in to create an event. <a onClick={handleLoginClick}><Link>Login</Link></a>
+            </p>
+          )}
         </>
       )}
       {showProfile && <Profile />}

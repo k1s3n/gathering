@@ -14,10 +14,15 @@ export const AuthProvider = ({ children }) => {
   const [posts, setPosts] = useState([]);
   const [postCount, setPostCount] = useState(0);
   const [latestPost, setLatestPost] = useState(null);
+  const [resetShowStateFlag, setResetShowStateFlag] = useState(false);
 
   const login = useCallback((token, userId) => {
     localStorage.setItem('token', token);
     setToken(token);
+  }, []);
+
+  const resetShowState = useCallback(() => {
+    setResetShowStateFlag(prevFlag => !prevFlag); // Toggle the flag to trigger state reset
   }, []);
 
   const logout = useCallback(() => {
@@ -28,7 +33,8 @@ export const AuthProvider = ({ children }) => {
     setPosts([]);
     setPostCount(0);
     setLatestPost(null);
-  }, []);
+    resetShowState();
+  }, [resetShowState]);
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -88,7 +94,7 @@ export const AuthProvider = ({ children }) => {
   
 
   return (
-    <AuthContext.Provider value={{ token, userInfo, posts, postCount,latestPost, fetchUserPosts, updateUserInfo, login, logout}}>
+    <AuthContext.Provider value={{ token, userInfo, posts, postCount,latestPost, fetchUserPosts, updateUserInfo, login, logout,resetShowStateFlag}}>
       {children}
     </AuthContext.Provider>
   );

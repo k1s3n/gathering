@@ -11,6 +11,7 @@ const Profile = () => {
   const [lastname, setLastname] = useState('');
   const [phone, setPhone] = useState('');
   const [message, setMessage] = useState('');
+  const [showUserPosts, setShowUserPosts] = useState(false);
 
   useEffect(() => {
     if (userInfo) {
@@ -41,6 +42,10 @@ const Profile = () => {
       console.error('Error updating user info:', error);
       setMessage('Failed to update user info');
     }
+  };
+
+  const handlePostsClick = () => {
+    setShowUserPosts(!showUserPosts);
   };
 
   return (
@@ -125,7 +130,11 @@ const Profile = () => {
               </>
             )}
           </div>
-          <div><UserPosts /></div>
+          
+          <div>
+            <button style={{ marginTop: '20px' }} onClick={handlePostsClick}>{showUserPosts ? 'Hide' : 'Post Details'} </button>
+            {showUserPosts && <UserPosts />}
+          </div>
         </>
       ) : (
         <p>Loading user info...</p>

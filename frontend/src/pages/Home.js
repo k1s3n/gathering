@@ -6,7 +6,10 @@ import Logout from '../components/Logout';
 import Register from '../components/Register';
 import CreateEvent from '../components/CreateEvent';
 import Profile from '../components/Profile';
-import { formatDate, formatDateTime } from '../components/timeconverter';
+import CalendarComponent from '../components/CalendarComponent';
+import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
+import '../Home.css';
+import '../css/calendar.css';
 
 const Home = () => {
   const { token, userId, userInfo } = useAuth();
@@ -15,9 +18,17 @@ const Home = () => {
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+
+  // calender import
+  const [showCalendar, setShowCalendar] = useState(false);
+  const [filteredEvents, setFilteredEvents] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(null);
+
+
   console.log('Token:', token);
   console.log('User ID:', userId);
   console.log('User Info:', userInfo);
+  
   useEffect(() => {
     const fetchEvents = async () => {
       try {
@@ -29,7 +40,7 @@ const Home = () => {
     };
 
     fetchEvents();
-  }, []);
+  }, [token]);
 
   const handleLoginClick = () => {
     setShowLogin(!showLogin);
@@ -39,6 +50,7 @@ const Home = () => {
   const handleCreateEventClick = () => {
     setShowCreateEvent(!showCreateEvent);
     setShowProfile(false);
+    setShowCalendar(false);
   };
 
   const handleRegisterClick = () => {
@@ -49,6 +61,30 @@ const Home = () => {
   const handleProfileClick = () => {
     setShowProfile(!showProfile);
     setShowCreateEvent(false);
+    setShowCalendar(false);
+  };
+
+  const handleCalendarClick = () => {
+    setShowCalendar(!showCalendar);
+    setShowProfile(false);
+    setShowCreateEvent(false);
+  };
+
+  useEffect(() => {
+    // Filter events based on selectedDate
+    if (selectedDate) {
+      const filtered = events.filter((event) => {
+        return new Date(event.date).toDateString() === selectedDate.toDateString();
+      });
+      setFilteredEvents(filtered);
+    } else {
+      // If no date is selected, show all events
+      setFilteredEvents(events);
+    }
+  }, [events, selectedDate]);
+
+  const handleDateChange = (newDate) => {
+    setSelectedDate(newDate);
   };
 
   return (
@@ -56,7 +92,7 @@ const Home = () => {
       {token ? (
         <>
           {userInfo ? (
-            <h1>Welcome [{userInfo.username}]</h1>
+            <h1>Welcome [{userInfo.email}]</h1>
           ) : (
             <p>Loading user info...</p>
           )}
@@ -65,6 +101,9 @@ const Home = () => {
           </button>
           <button onClick={handleProfileClick}>
             {showProfile ? 'Cancel' : 'Profile'}
+          </button>
+          <button onClick={handleCalendarClick}>
+            {showCalendar ? 'Cancel' : 'Calendar'}
           </button>
           <button>
             <Logout />
@@ -79,6 +118,9 @@ const Home = () => {
           <button onClick={handleRegisterClick}>
             {showRegister ? 'Cancel' : 'Register'}
           </button>
+          <button onClick={handleCalendarClick}>
+            {showCalendar ? 'Cancel' : 'Calendar'}
+          </button>
 
           {/*Show login and register components based on their state */}
           {showRegister && <Register />}
@@ -87,25 +129,37 @@ const Home = () => {
       )}
       {showProfile && <Profile />}
       {showCreateEvent && <CreateEvent />}
-
-      <h2>Events</h2>
-      {events.length > 0 ? (
-        <ul>
-          {events.map((event) => (
-            <li key={event._id}>
-              <h3>{event.title}</h3>
-              <p>Desc: {event.description}</p>
-              <p>Location: {event.location}</p>
-              <p>Date: {formatDate(event.date)}</p>
-              <p>Time: {event.time}</p>
-              <p>Created: {formatDateTime(event.postCreated)}</p>
-              <p>Created by: {event.createdBy}</p>
-            </li>
-          ))}
-        </ul>
+      {/* Display events calender */}
+      {showCalendar && <CalendarComponent events={events} onDateChange={handleDateChange} />}
+      <div className='container-header'><h1>Events</h1></div>
+      {filteredEvents.length > 0 ? (
+        filteredEvents.map((event) => (
+          <div className='container' key={event._id}>
+            <h2>{event.title}</h2>
+            {event.latitude && event.longitude ? (
+              <div className='map-container' style={{ height: '300px', width: '100%' }}>
+              <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}>
+                <GoogleMap
+                  mapContainerStyle={{ height: '100%', width: '100%' }}
+                  center={{ lat:event.latitude, lng: event.longitude }}
+                  zoom={10}
+                >
+                  <Marker position={{ lat: event.latitude, lng: event.longitude }} />
+                </GoogleMap>
+              </LoadScript>
+              </div>
+              ) : (
+                <p className='no-coordinates'>No coordinates available</p>
+              )}
+            <p >Date: {new Date(event.date).toLocaleDateString()} Time: {event.time}</p>
+            <p>Desc: {event.description}</p>
+            <p>Location: {event.location}</p> 
+          </div>
+        ))
       ) : (
-        <p>No events available</p>
+        <p>No events found for the selected date.</p>
       )}
+      {/* Display events calender */}
     </div>
   );
 };

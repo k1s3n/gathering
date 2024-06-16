@@ -49,7 +49,7 @@ const Profile = () => {
       {userInfo ? (
         <>
           <div>
-            <label>Email:</label>
+            <label>Email: </label>
             {editMode === 'email' ? (
               <>
                 <input
@@ -63,12 +63,12 @@ const Profile = () => {
             ) : (
               <>
                 <span>{userInfo.email}</span>
-                <button onClick={() => setEditMode('email')}>Edit</button>
+                <button style={{ marginLeft: '10px' }} onClick={() => setEditMode('email')}>Edit</button>
               </>
             )}
           </div>
           <div>
-            <label>First Name:</label>
+            <label>First Name: </label>
             {editMode === 'firstname' ? (
               <>
                 <input
@@ -82,12 +82,12 @@ const Profile = () => {
             ) : (
               <>
                 <span>{userInfo.firstname}</span>
-                <button onClick={() => setEditMode('firstname')}>Edit</button>
+                <button style={{ marginLeft: '10px' }} onClick={() => setEditMode('firstname')}>Edit</button>
               </>
             )}
           </div>
           <div>
-            <label>Last Name:</label>
+            <label>Last Name: </label>
             {editMode === 'lastname' ? (
               <>
                 <input
@@ -101,12 +101,12 @@ const Profile = () => {
             ) : (
               <>
                 <span>{userInfo.lastname}</span>
-                <button onClick={() => setEditMode('lastname')}>Edit</button>
+                <button style={{ marginLeft: '10px' }} onClick={() => setEditMode('lastname')}>Edit</button>
               </>
             )}
           </div>
           <div>
-            <label>Phone:</label>
+            <label>Phone: </label>
             {editMode === 'phone' ? (
               <>
                 <input
@@ -120,7 +120,7 @@ const Profile = () => {
             ) : (
               <>
                 <span>{userInfo.phone}</span>
-                <button onClick={() => setEditMode('phone')}>Edit</button>
+                <button style={{ marginLeft: '10px' }} onClick={() => setEditMode('phone')}>Edit</button>
               </>
             )}
           </div>

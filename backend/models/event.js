@@ -4,6 +4,8 @@ const eventSchema = new mongoose.Schema({
   title: { type: String},
   description: { type: String },
   location: { type: String },
+  latitude: { type: Number },
+  longitude: { type: Number },
   date: { type: Date, required: true },
   time: { type: String, required: true},
   postCreated: { type: Date, default: Date.now },

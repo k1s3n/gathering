@@ -4,7 +4,7 @@ const Event = require('../models/event');
 
 // Function to create a new event
 const createEvent = async (req, res) => {
-  const { title, description, location, date, time } = req.body;
+  const { title, description, location,latitude, longitude, date, time } = req.body;
 
   try {
     // Create a new event instance with the provided data and user ID
@@ -12,6 +12,8 @@ const createEvent = async (req, res) => {
       title,
       description,
       location,
+      latitude,
+      longitude,
       date,
       time,
       createdBy: req.user.userId  // Sätt createdBy till userId från autentiserad användare
@@ -28,12 +30,13 @@ const createEvent = async (req, res) => {
 
 async function getEvents(req, res) {
   try {
-    const events = await Event.find();
+    const events = await Event.find().sort({ postCreated: -1 });
     res.json(events);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching events' });
   }
 }
+
 
 
 // Function to create a new user

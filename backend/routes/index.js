@@ -14,9 +14,12 @@ router.post('/createEvent', authenticateToken,userController.createEvent);
 
 router.get('/events', userController.getEvents);
 
-router.get('/userinfo', authenticateToken, userController.getUserInfo);
+router.get('/user', authenticateToken, userController.getUserInfo);
 
-router.put('/userinfo', authenticateToken, userController.updateUserInfo);
+router.put('/user/update', authenticateToken, userController.updateUserInfo);
+
+router.get('/user/posts', authenticateToken, userController.getUserPosts);
+
 
 
 // Define protected routes

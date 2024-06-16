@@ -8,6 +8,7 @@ import CalendarComponent from './components/CalendarComponent';
 import { AuthProvider, useAuth } from './AuthContext';
 import './index.css';
 import Profile from './components/Profile';
+import UserPosts from './components/UserPosts';
 
 const App = () => {
   return (
@@ -20,6 +21,7 @@ const App = () => {
           <Route path="/calender" element={<CalendarComponent />} />
           <Route path="/createEvent" element={<ProtectedRoute><CreateEvent /></ProtectedRoute>} />
           <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+          <Route path="/posts" element={<ProtectedRoute><UserPosts /></ProtectedRoute>} />
         </Routes>
       </Router>
     </AuthProvider>

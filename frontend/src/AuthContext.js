@@ -11,24 +11,30 @@ const getStoredToken = () => localStorage.getItem('token') || null;
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(getStoredToken());
   const [userInfo, setUserInfo] = useState(null);
+  const [posts, setPosts] = useState([]);
+  const [postCount, setPostCount] = useState(0);
+  const [latestPost, setLatestPost] = useState(null);
 
   const login = useCallback((token, userId) => {
     localStorage.setItem('token', token);
     setToken(token);
-  }, [token]);
+  }, []);
 
   const logout = useCallback(() => {
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
     setToken(null);
     setUserInfo(null);
+    setPosts([]);
+    setPostCount(0);
+    setLatestPost(null);
   }, []);
 
   useEffect(() => {
     const fetchUserInfo = async () => {
       if (token) {
         try {
-          const userData = await API.get('/userinfo', 
+          const userData = await API.get('/user', 
             { headers: { Authorization: `Bearer ${token}` } }
           );
           if (!userData) {
@@ -48,7 +54,7 @@ export const AuthProvider = ({ children }) => {
   const updateUserInfo = useCallback(async (updatedInfo) => {
     if (token) {
       try {
-        const response = await API.put('/userinfo', updatedInfo, {
+        const response = await API.put('/user/update', updatedInfo, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (!response.data) {
@@ -65,10 +71,24 @@ export const AuthProvider = ({ children }) => {
     }
   }, [token]);
 
+  const fetchUserPosts = useCallback(async () => {
+    if (token) {
+      try {
+        const response = await API.get('/user/posts', {
+          headers: { Authorization: `Bearer ${token}` }});
+        setPosts(response.data.posts);
+        setPostCount(response.data.count);
+        setLatestPost(response.data.latestPost);
+        console.log(response.data);
+      } catch (error) {
+        console.error('Error fetching posts:', error);
+      }
+    }
+  }, [token]);
   
 
   return (
-    <AuthContext.Provider value={{ token, userInfo, updateUserInfo, login, logout}}>
+    <AuthContext.Provider value={{ token, userInfo, posts, postCount,latestPost, fetchUserPosts, updateUserInfo, login, logout}}>
       {children}
     </AuthContext.Provider>
   );

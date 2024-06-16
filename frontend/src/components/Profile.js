@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../AuthContext';
+import UserPosts from './UserPosts';
+
 
 const Profile = () => {
   const { userInfo, updateUserInfo } = useAuth();
   const [editMode, setEditMode] = useState(null); // Use null to indicate no editing
-
   const [email, setEmail] = useState('');
   const [firstname, setFirstname] = useState('');
   const [lastname, setLastname] = useState('');
@@ -124,6 +125,7 @@ const Profile = () => {
               </>
             )}
           </div>
+          <div><UserPosts /></div>
         </>
       ) : (
         <p>Loading user info...</p>

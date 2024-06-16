@@ -93,6 +93,29 @@ const getUserInfo = async (req, res) => {
   }
 };
 
+const getUserPosts = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const posts = await Event.find({ createdBy: user._id });
+    const count = posts.length;
+    const sortedPosts = posts.sort((a, b) => new Date(b.postCreated) - new Date(a.postCreated));
+
+    res.json({
+      posts,
+      count,
+      latestPost: sortedPosts[0],
+    });
+  } catch (error) {
+    console.error('Error fetching user posts:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+
 const updateUserInfo = async (req, res) => {
   const { username, email, phone, firstname, lastname } = req.body;
   try {
@@ -129,11 +152,13 @@ const updateUserInfo = async (req, res) => {
 
 
 
+
 module.exports = {
     createUser,
     createEvent,
     getEvents,
     getUserInfo,
-    updateUserInfo
+    updateUserInfo,
+    getUserPosts
 
   };

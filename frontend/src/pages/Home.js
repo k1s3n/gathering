@@ -13,7 +13,7 @@ import '../Home.css';
 import '../css/calendar.css';
 
 const Home = () => {
-  const { token, userId, userInfo, resetShowStateFlag} = useAuth();
+  const { token, userInfo, resetShowStateFlag} = useAuth();
   const [events, setEvents] = useState([]);
   const [showCreateEvent, setShowCreateEvent] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
@@ -126,9 +126,9 @@ const Home = () => {
           {/*Show login and register components based on their state */}
           {showRegister && <Register />}
           {showLogin && <Login />}
-          {!showLogin && (
+          {!showLogin && !showRegister && (
             <p>
-              You must be logged in to create an event. <a onClick={handleLoginClick}><Link>Login</Link></a>
+              You must be logged in to create an event. <a onClick={handleLoginClick}><Link>Login</Link></a> or <a onClick={handleRegisterClick}><Link>Register</Link></a>
             </p>
           )}
         </>

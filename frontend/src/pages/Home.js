@@ -7,7 +7,7 @@ import Register from '../components/Register';
 import CreateEvent from '../components/CreateEvent';
 import Profile from '../components/Profile';
 import CalendarComponent from '../components/CalendarComponent';
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
+import { GoogleMap, Marker } from '@react-google-maps/api';
 import { Link } from 'react-router-dom';
 import '../Home.css';
 import '../css/calendar.css';
@@ -128,7 +128,7 @@ const Home = () => {
           {showLogin && <Login />}
           {!showLogin && !showRegister && (
             <p>
-              You must be logged in to create an event. <a onClick={handleLoginClick}><Link>Login</Link></a> or <a onClick={handleRegisterClick}><Link>Register</Link></a>
+              You must be logged in to create an event. <Link onClick={handleLoginClick}>Login</Link> or <Link onClick={handleRegisterClick}>Register</Link>
             </p>
           )}
         </>
@@ -144,15 +144,13 @@ const Home = () => {
             <h2>{event.title}</h2>
             {event.latitude && event.longitude ? (
               <div className='map-container' style={{ height: '300px', width: '100%' }}>
-              <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}>
                 <GoogleMap
                   mapContainerStyle={{ height: '100%', width: '100%' }}
                   center={{ lat:event.latitude, lng: event.longitude }}
-                  zoom={10}
+                  zoom={11}
                 >
                   <Marker position={{ lat: event.latitude, lng: event.longitude }} />
                 </GoogleMap>
-              </LoadScript>
               </div>
               ) : (
                 <p className='no-coordinates'>No coordinates available</p>

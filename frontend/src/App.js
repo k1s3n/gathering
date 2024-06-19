@@ -9,9 +9,13 @@ import { AuthProvider, useAuth } from './AuthContext';
 import './index.css';
 import Profile from './components/Profile';
 import UserPosts from './components/UserPosts';
+import GoogleMapsLoader from './components/GoogleMapComponent';
 
 const App = () => {
+
+  
   return (
+    <GoogleMapsLoader>
     <AuthProvider>
       <Router>
         <Routes>
@@ -25,6 +29,7 @@ const App = () => {
         </Routes>
       </Router>
     </AuthProvider>
+    </GoogleMapsLoader>
   );
 };
 

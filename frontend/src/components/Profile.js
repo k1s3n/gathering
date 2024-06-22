@@ -31,11 +31,7 @@ const Profile = () => {
       if (field === 'phone') updatedInfo = { phone };
 
       const response = await updateUserInfo(updatedInfo);
-      if (response && response.message) {
-        setMessage(response.message);
-      } else {
-        setMessage('.:: User info updated successfully ::.');
-      }
+      setMessage(response?.message || '.:: User info updated successfully ::.');
 
       setEditMode(null); // Exit edit mode
     } catch (error) {

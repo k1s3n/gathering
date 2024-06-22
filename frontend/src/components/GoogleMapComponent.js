@@ -1,6 +1,7 @@
 // GoogleMapsLoader.js
 import React from 'react';
 import { LoadScript } from '@react-google-maps/api';
+import PropTypes from 'prop-types'; // Import PropTypes
 
 const libraries = ['places'];
 
@@ -10,6 +11,11 @@ const GoogleMapsLoader = ({ children }) => {
       {children}
     </LoadScript>
   );
+  
+};
+
+GoogleMapsLoader.propTypes = {
+  children: PropTypes.node.isRequired, // Add prop type validation for children
 };
 
 export default GoogleMapsLoader;

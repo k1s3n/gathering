@@ -30,13 +30,16 @@ const createEvent = async (req, res) => {
 
 async function getEvents(req, res) {
   try {
-    const events = await Event.find().sort({ postCreated: -1 });
+    const now = new Date(); // Current date and time
+    now.setHours(0, 0, 0, 0); // Set time to start of today (midnight)
+
+    const events = await Event.find({ date: { $gte: now } }).sort({ date: 1, time: 1 });
     res.json(events);
   } catch (error) {
+    console.error('Error fetching events:', error);
     res.status(500).json({ message: 'Error fetching events' });
   }
 }
-
 
 
 // Function to create a new user

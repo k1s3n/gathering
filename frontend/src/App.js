@@ -6,10 +6,10 @@ import Register from './components/Register';
 import CreateEvent from './components/CreateEvent';
 import CalendarComponent from './components/CalendarComponent';
 import { AuthProvider, useAuth } from './AuthContext';
-import './index.css';
 import Profile from './components/Profile';
 import UserPosts from './components/UserPosts';
 import GoogleMapsLoader from './components/GoogleMapComponent';
+import PropTypes from 'prop-types';
 
 const App = () => {
 
@@ -37,6 +37,10 @@ const App = () => {
 const ProtectedRoute = ({ children }) => {
   const { token } = useAuth();
   return token ? children : <Navigate to="/login" />;
+};
+
+ProtectedRoute.propTypes = {
+  children: PropTypes.node.isRequired, // Add prop type validation for children
 };
 
 export default App;

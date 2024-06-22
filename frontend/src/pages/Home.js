@@ -47,9 +47,9 @@ const Home = () => {
     if (date) {
       const filtered = events.filter((event) => new Date(event.date).toLocaleDateString() === date.toLocaleDateString());
       const sorted = filtered.sort((a, b) => {
-      const timeA = parseInt(a.time.replace(':', ''), 10);
-      const timeB = parseInt(b.time.replace(':', ''), 10);
-      return timeA - timeB;
+        const timeA = parseInt(a.time.replace(':', ''), 10);
+        const timeB = parseInt(b.time.replace(':', ''), 10);
+        return timeA - timeB;
       });
       setFilteredEvents(sorted);
     } else {
@@ -143,6 +143,12 @@ const Home = () => {
     }
   }, [fetchEvents, token]); // Include fetchEvents and token in dependency array
 
+  const openGoogleMaps = useCallback((event) => {
+    const { latitude, longitude } = event;
+    const url = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
+    window.open(url, '_blank');
+  }, []);
+
   return (
     <div>
       {token ? (
@@ -200,15 +206,18 @@ const Home = () => {
           <div className='container' key={event._id}>
             <h2>{event.title}</h2>
             {event.latitude && event.longitude ? (
-              <div className='map-container' style={{ height: '300px', width: '100%' }}>
-                <GoogleMap
-                  mapContainerStyle={{ height: '100%', width: '100%' }}
-                  center={{ lat: event.latitude, lng: event.longitude }}
-                  zoom={11}
-                >
-                  <Marker position={{ lat: event.latitude, lng: event.longitude }} />
-                </GoogleMap>
-              </div>
+              <>
+                <div className='map-container' style={{ height: '300px', width: '100%' }}>
+                  <GoogleMap
+                    mapContainerStyle={{ height: '100%', width: '100%' }}
+                    center={{ lat: event.latitude, lng: event.longitude }}
+                    zoom={11}
+                  >
+                    <Marker position={{ lat: event.latitude, lng: event.longitude }} />
+                  </GoogleMap>
+                </div>
+                
+              </>
             ) : (
               <p className='no-coordinates'>No coordinates available</p>
             )}
@@ -216,7 +225,9 @@ const Home = () => {
               Date: {new Date(event.date).toLocaleDateString()} Time: {event.time}
             </p>
             <p>Desc: {event.description}</p>
-            <p>Location: {event.location}</p>
+            <Link onClick={() => openGoogleMaps(event)}>
+                  {event.location}
+                  </Link>
           </div>
         ))
       ) : (

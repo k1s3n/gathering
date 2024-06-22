@@ -279,7 +279,7 @@ const Home = () => {
                 <h3>Comments</h3>
                 {commentsMap.has(event._id) && commentsMap.get(event._id).map(comment => (
                   <div key={comment._id} className="comment">
-                    <p>{comment.user.username}: {comment.text}</p>
+                    <p>{new Date(comment.createdAt).toLocaleDateString()} / {comment.user.username}: {comment.text}</p>
                   </div>
                 ))}
                 <form onSubmit={handleCommentSubmit}>

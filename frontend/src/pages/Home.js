@@ -9,7 +9,7 @@ import Profile from '../components/Profile';
 import CalendarComponent from '../components/CalendarComponent';
 import { GoogleMap, Marker } from '@react-google-maps/api';
 import { Link } from 'react-router-dom';
-import '../Home.css'; // Ensure you have the correct path to your CSS file
+import '../Home.css'; // Säkerställ att du har rätt sökväg till din CSS-fil
 import '../css/calendar.css';
 
 const Home = () => {
@@ -23,6 +23,11 @@ const Home = () => {
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const [message, setMessage] = useState('');
+  const [commentsMap, setCommentsMap] = useState(new Map());
+  const [selectedEvent, setSelectedEvent] = useState(null);
+
+  // State för att spåra nya kommentarer för det valda evenemanget
+  const [newCommentMap, setNewCommentMap] = useState(new Map());
 
   const fetchEvents = useCallback(async () => {
     try {
@@ -39,6 +44,16 @@ const Home = () => {
       setEvents(sortedEvents);
     } catch (error) {
       console.error('Error fetching events:', error);
+    }
+  }, []);
+
+  const fetchComments = useCallback(async (eventId) => {
+    try {
+      const response = await API.get(`/comments/${eventId}`);
+      // Lagra kommentarer i en karta med eventId som nyckel
+      setCommentsMap((prevCommentsMap) => new Map(prevCommentsMap.set(eventId, response.data)));
+    } catch (error) {
+      console.error('Error fetching comments:', error);
     }
   }, []);
 
@@ -78,6 +93,15 @@ const Home = () => {
     setShowCreateEvent(false);
     setShowProfile(false);
   }, [resetShowStateFlag]);
+
+  // Ladda kommentarer för varje event när sidan renderas för första gången
+  useEffect(() => {
+    if (events.length > 0) {
+      events.forEach((event) => {
+        fetchComments(event._id);
+      });
+    }
+  }, [events, fetchComments]);
 
   const handleToggleState = useCallback((setState, stateToToggle) => {
     setState((prevState) => !prevState);
@@ -137,11 +161,44 @@ const Home = () => {
     }
   }, [fetchEvents, token]);
 
+  const handleCommentSubmit = useCallback(async (event) => {
+    event.preventDefault();
+    try {
+      const response = await API.post(`/comments`, { eventId: selectedEvent, text: newCommentMap.get(selectedEvent) }, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (response.status === 201) {
+        // Rensa den nya kommentarsinmatningen efter lyckad inlämning
+        setNewCommentMap((prevMap) => new Map(prevMap.set(selectedEvent, '')));
+        fetchComments(selectedEvent);
+      } else {
+        console.error('Failed to submit comment');
+      }
+    } catch (error) {
+      console.error('Error submitting comment:', error);
+    }
+  }, [newCommentMap, selectedEvent, token, fetchComments]);
+
   const openGoogleMaps = useCallback((event) => {
     const { latitude, longitude } = event;
     const url = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
     window.open(url, '_blank');
   }, []);
+
+  const handleEventClick = useCallback((event) => {
+    setSelectedEvent(event._id);
+    // Initialisera ny kommentarsinmatning för det valda evenemanget
+    if (!newCommentMap.has(event._id)) {
+      setNewCommentMap((prevMap) => new Map(prevMap.set(event._id, '')));
+    }
+    fetchComments(event._id);
+  }, [fetchComments, newCommentMap]);
+
+  const handleNewCommentChange = useCallback((event) => {
+    const { value } = event.target;
+    setNewCommentMap((prevMap) => new Map(prevMap.set(selectedEvent, value)));
+  }, [selectedEvent]);
 
   return (
     <div className="home-container">
@@ -150,10 +207,8 @@ const Home = () => {
           <>
             {userInfo ? (
               <div className='welcome'>
-              <h3>Welcome {userInfo.username} <button>
-              <Logout />
-            </button></h3>
-            </div>
+                <h3>Welcome {userInfo.username} </h3>
+              </div>
             ) : (
               <p>Loading user info...</p>
             )}
@@ -163,6 +218,7 @@ const Home = () => {
             <button onClick={handleProfileClick}>
               {showProfile ? 'Cancel' : 'Profile'}
             </button>
+            <button><Logout /></button>
             <p>{message && <p>{message}</p>}</p>
           </>
         ) : (
@@ -197,7 +253,7 @@ const Home = () => {
         </div>
         {filteredEvents.length > 0 ? (
           filteredEvents.map((event) => (
-            <div className="event-container" key={event._id}>
+            <div className="event-container" key={event._id} onClick={() => handleEventClick(event)}>
               <h2>{event.title}</h2>
               {event.latitude && event.longitude ? (
                 <div className="map-container">
@@ -209,7 +265,6 @@ const Home = () => {
                     <Marker position={{ lat: event.latitude, lng: event.longitude }} />
                   </GoogleMap>
                 </div>
-                
               ) : (
                 <p className="no-coordinates">No coordinates available</p>
               )}
@@ -220,10 +275,28 @@ const Home = () => {
                 <p>Info: {event.description}</p>
                 <Link onClick={() => openGoogleMaps(event)}>{event.location}</Link>
               </div>
+              <div className="comments-section">
+                <h3>Comments</h3>
+                {commentsMap.has(event._id) && commentsMap.get(event._id).map(comment => (
+                  <div key={comment._id} className="comment">
+                    <p>{comment.user.username}: {comment.text}</p>
+                  </div>
+                ))}
+                <form onSubmit={handleCommentSubmit}>
+                  <input 
+                    type="text" 
+                    value={newCommentMap.get(event._id) || ''} 
+                    onChange={handleNewCommentChange} 
+                    placeholder="Write a comment..." 
+                    required 
+                  />
+                  <button type="submit">Submit</button>
+                </form>
+              </div>
             </div>
           ))
         ) : (
-          <p align="center">
+          <p style={{ textAlign: 'center' }}>
             {selectedDate
               ? `No events on ${selectedDate.toLocaleDateString()}`
               : 'No events found for the selected date.'}
@@ -232,7 +305,7 @@ const Home = () => {
       </div>
       <div className="right-column">
         <div className='sticky-calendar'>
-        <CalendarComponent events={events} onDateChange={handleDateChange} />
+          <CalendarComponent events={events} onDateChange={handleDateChange} />
         </div>
         <div>
         </div>

@@ -1,6 +1,7 @@
 const hashPassword = require('../utils/hashPassword');
 const User = require('../models/user');
 const Event = require('../models/event');
+const Comment = require('../models/comment');
 
 // Function to create a new event
 const createEvent = async (req, res) => {
@@ -106,7 +107,7 @@ const getUserPosts = async (req, res) => {
 
     const posts = await Event.find({ createdBy: user._id });
     const count = posts.length;
-    const sortedPosts = posts.tosorted((a, b) => new Date(b.postCreated) - new Date(a.postCreated));
+    const sortedPosts = posts.sort((a, b) => new Date(b.postCreated) - new Date(a.postCreated));
 
     res.json({
       posts,
@@ -153,6 +154,48 @@ const updateUserInfo = async (req, res) => {
   }
 };
 
+const getComments = async (req, res) => {
+  try {
+    const comments = await Comment.find({ eventId: req.params.eventId })
+      .populate({
+        path: 'user',
+        select: 'username email firstname lastname', // Select fields you want to populate
+      })
+      .exec();
+
+    res.json(comments);
+  } catch (error) {
+    console.error('Error fetching comments:', error);
+    res.status(500).json({ error: 'Error fetching comments' });
+  }
+};
+
+
+const createComment = async (req, res) => {
+  try {
+    const { userId } = req.user; // Assuming userId is extracted from JWT payload
+    const { eventId, text } = req.body;
+
+    // Validate input fields
+    if (!eventId || !text) {
+      return res.status(400).json({ error: 'Event ID and text are required fields' });
+    }
+
+    // Create the comment
+    const newComment = new Comment({
+      user: userId, // Assigning userId extracted from JWT payload
+      eventId,
+      text,
+    });
+
+    await newComment.save();
+
+    res.status(201).json(newComment);
+  } catch (error) {
+    console.error('Error creating comment:', error);
+    res.status(500).json({ error: 'Error creating comment' });
+  }
+};
 
 
 
@@ -163,6 +206,9 @@ module.exports = {
     getEvents,
     getUserInfo,
     updateUserInfo,
-    getUserPosts
+    getUserPosts,
+    getComments,
+    createComment
+
 
   };

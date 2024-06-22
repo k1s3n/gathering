@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react';
 import { useAuth } from '../AuthContext';
+import { Link } from 'react-router-dom';
+import CreateEvent from './CreateEvent';
 
 const UserPosts = () => {
   const { posts, postCount, latestPost, fetchUserPosts, userInfo } = useAuth();
@@ -36,7 +38,7 @@ const UserPosts = () => {
           </div>
         ))
       ) : (
-        <p>No posts found</p>
+        <p>You have not created any events go to create event</p>
       )}
     </div>
   );

@@ -9,7 +9,7 @@ import Profile from '../components/Profile';
 import CalendarComponent from '../components/CalendarComponent';
 import { GoogleMap, Marker } from '@react-google-maps/api';
 import { Link } from 'react-router-dom';
-import '../Home.css';
+import '../Home.css'; // Ensure you have the correct path to your CSS file
 import '../css/calendar.css';
 
 const Home = () => {
@@ -32,7 +32,6 @@ const Home = () => {
         const dateB = new Date(b.date);
         if (dateA < dateB) return -1;
         if (dateA > dateB) return 1;
-        // Dates are the same, compare times
         const timeA = parseInt(a.time.replace(':', ''), 10);
         const timeB = parseInt(b.time.replace(':', ''), 10);
         return timeA - timeB;
@@ -53,13 +52,11 @@ const Home = () => {
       });
       setFilteredEvents(sorted);
     } else {
-      // If date is null or undefined, show all events
       const sorted = events.slice().sort((a, b) => {
         const dateA = new Date(a.date);
         const dateB = new Date(b.date);
         if (dateA < dateB) return -1;
         if (dateA > dateB) return 1;
-        // Dates are the same, compare times
         const timeA = parseInt(a.time.replace(':', ''), 10);
         const timeB = parseInt(b.time.replace(':', ''), 10);
         return timeA - timeB;
@@ -70,17 +67,17 @@ const Home = () => {
 
   useEffect(() => {
     fetchEvents();
-  }, [fetchEvents, token]); // Include fetchEvents and token in dependency array
+  }, [fetchEvents, token]);
 
   useEffect(() => {
     filterEventsByDate(selectedDate);
-  }, [events, selectedDate, filterEventsByDate]); // Include events, selectedDate, and filterEventsByDate in dependency array
+  }, [events, selectedDate, filterEventsByDate]);
 
   useEffect(() => {
     setShowCalendar(false);
     setShowCreateEvent(false);
     setShowProfile(false);
-  }, [resetShowStateFlag]); // Include resetShowStateFlag in dependency array
+  }, [resetShowStateFlag]);
 
   const handleToggleState = useCallback((setState, stateToToggle) => {
     setState((prevState) => !prevState);
@@ -89,31 +86,31 @@ const Home = () => {
     if (stateToToggle !== showCreateEvent) setShowCreateEvent(false);
     if (stateToToggle !== showProfile) setShowProfile(false);
     if (stateToToggle !== showCalendar) setShowCalendar(false);
-  }, [showLogin, showRegister, showCreateEvent, showProfile, showCalendar]); // Include showLogin, showRegister, showCreateEvent, showProfile, and showCalendar in dependency array
+  }, [showLogin, showRegister, showCreateEvent, showProfile, showCalendar]);
 
   const handleLoginClick = useCallback(() => {
     handleToggleState(setShowLogin, showLogin);
-  }, [handleToggleState, showLogin]); // Include handleToggleState and showLogin in dependency array
+  }, [handleToggleState, showLogin]);
 
   const handleCreateEventClick = useCallback(() => {
     handleToggleState(setShowCreateEvent, showCreateEvent);
-  }, [handleToggleState, showCreateEvent]); // Include handleToggleState and showCreateEvent in dependency array
+  }, [handleToggleState, showCreateEvent]);
 
   const handleRegisterClick = useCallback(() => {
     handleToggleState(setShowRegister, showRegister);
-  }, [handleToggleState, showRegister]); // Include handleToggleState and showRegister in dependency array
+  }, [handleToggleState, showRegister]);
 
   const handleProfileClick = useCallback(() => {
     handleToggleState(setShowProfile, showProfile);
-  }, [handleToggleState, showProfile]); // Include handleToggleState and showProfile in dependency array
+  }, [handleToggleState, showProfile]);
 
   const handleCalendarClick = useCallback(() => {
     handleToggleState(setShowCalendar, showCalendar);
-  }, [handleToggleState, showCalendar]); // Include handleToggleState and showCalendar in dependency array
+  }, [handleToggleState, showCalendar]);
 
   const handleDateChange = useCallback((newDate) => {
     setSelectedDate(newDate);
-  }, []); // No dependencies needed here
+  }, []);
 
   const handleFormSubmit = useCallback(async (formData) => {
     try {
@@ -122,7 +119,7 @@ const Home = () => {
       });
 
       if (response.status === 201) {
-        fetchEvents(); // Refresh events list after creating a new event
+        fetchEvents();
         setShowCreateEvent(false);
         setMessage('Event created successfully');
       } else {
@@ -130,18 +127,15 @@ const Home = () => {
       }
     } catch (error) {
       if (error.response) {
-        // The request was made and the server responded with a status code
         console.error('Server responded with a non-2xx status:', error.response.data);
       } else if (error.request) {
-        // The request was made but no response was received
         console.error('Request made but no response received:', error.request);
       } else {
-        // Something happened in setting up the request that triggered an error
         console.error('Error setting up the request:', error.message);
       }
       setMessage('Failed to create event');
     }
-  }, [fetchEvents, token]); // Include fetchEvents and token in dependency array
+  }, [fetchEvents, token]);
 
   const openGoogleMaps = useCallback((event) => {
     const { latitude, longitude } = event;
@@ -150,66 +144,65 @@ const Home = () => {
   }, []);
 
   return (
-    <div>
-      {token ? (
-        <>
-          {userInfo ? (
-            <h1>Welcome [{userInfo.email}]</h1>
-          ) : (
-            <p>Loading user info...</p>
-          )}
-          <button onClick={handleCreateEventClick}>
-            {showCreateEvent ? 'Cancel' : 'Create Event'}
-          </button>
-          <button onClick={handleProfileClick}>
-            {showProfile ? 'Cancel' : 'Profile'}
-          </button>
-          <button onClick={handleCalendarClick}>
-            {showCalendar ? 'Cancel' : 'Calendar'}
-          </button>
-          <button>
-            <Logout />
-          </button>
-          <p>{message && <p>{message}</p>}</p>
-        </>
-      ) : (
-        <>
-          <h1>Welcome to the gathering</h1>
-          <button onClick={handleLoginClick}>
-            {showLogin ? 'Cancel' : 'Login'}
-          </button>
-          <button onClick={handleRegisterClick}>
-            {showRegister ? 'Cancel' : 'Register'}
-          </button>
-          <button onClick={handleCalendarClick}>
-            {showCalendar ? 'Cancel' : 'Calendar'}
-          </button>
-          {showRegister && <Register />}
-          {showLogin && <Login />}
-          {!showLogin && !showRegister && (
-            <p>
-              You must be logged in to create an event.{' '}
-              <Link onClick={handleLoginClick}>Login</Link> or{' '}
-              <Link onClick={handleRegisterClick}>Register</Link>
-            </p>
-          )}
-        </>
-      )}
-      {showProfile && <Profile />}
-      {showCreateEvent && <CreateEvent onSubmit={handleFormSubmit} />}
-      {showCalendar && <CalendarComponent events={events} onDateChange={handleDateChange} />}
-      <div className='container-header'>
-        <h1>Events</h1>
+    <div className="home-container">
+      <div className="left-column">
+        {token ? (
+          <>
+            {userInfo ? (
+              <div className='welcome'>
+              <h3>Welcome {userInfo.username} <button>
+              <Logout />
+            </button></h3>
+            </div>
+            ) : (
+              <p>Loading user info...</p>
+            )}
+            <button onClick={handleCreateEventClick}>
+              {showCreateEvent ? 'Cancel' : 'Create Event'}
+            </button>
+            <button onClick={handleProfileClick}>
+              {showProfile ? 'Cancel' : 'Profile'}
+            </button>
+            <p>{message && <p>{message}</p>}</p>
+          </>
+        ) : (
+          <>
+            <h3>Welcome to the gathering</h3>
+            <button onClick={handleLoginClick}>
+              {showLogin ? 'Cancel' : 'Login'}
+            </button>
+            <button onClick={handleRegisterClick}>
+              {showRegister ? 'Cancel' : 'Register'}
+            </button>
+            <button onClick={handleCalendarClick}>
+              {showCalendar ? 'Cancel' : 'Calendar'}
+            </button>
+            {showRegister && <Register />}
+            {showLogin && <Login />}
+            {!showLogin && !showRegister && (
+              <p>
+                You must be logged in to create an event.{' '}
+                <Link onClick={handleLoginClick}>Login</Link> or{' '}
+                <Link onClick={handleRegisterClick}>Register</Link>
+              </p>
+            )}
+          </>
+        )}
+        {showProfile && <Profile />}
+        {showCreateEvent && <CreateEvent onSubmit={handleFormSubmit} />}
       </div>
-      {filteredEvents.length > 0 ? (
-        filteredEvents.map((event) => (
-          <div className='container' key={event._id}>
-            <h2>{event.title}</h2>
-            {event.latitude && event.longitude ? (
-              <>
-                <div className='map-container' style={{ height: '300px', width: '100%' }}>
+      <div className="events-column">
+        <div className="container-header">
+          <h1>Events</h1>
+        </div>
+        {filteredEvents.length > 0 ? (
+          filteredEvents.map((event) => (
+            <div className="event-container" key={event._id}>
+              <h2>{event.title}</h2>
+              {event.latitude && event.longitude ? (
+                <div className="map-container">
                   <GoogleMap
-                    mapContainerStyle={{ height: '100%', width: '100%' }}
+                    mapContainerStyle={{ height: '200px', width: '100%' }}
                     center={{ lat: event.latitude, lng: event.longitude }}
                     zoom={11}
                   >
@@ -217,22 +210,33 @@ const Home = () => {
                   </GoogleMap>
                 </div>
                 
-              </>
-            ) : (
-              <p className='no-coordinates'>No coordinates available</p>
-            )}
-            <p>
-              Date: {new Date(event.date).toLocaleDateString()} Time: {event.time}
-            </p>
-            <p>Desc: {event.description}</p>
-            <Link onClick={() => openGoogleMaps(event)}>
-                  {event.location}
-                  </Link>
-          </div>
-        ))
-      ) : (
-        <p>{selectedDate ? `No events on ${selectedDate.toLocaleDateString()}` : 'No events found for the selected date.'}</p>
-      )}
+              ) : (
+                <p className="no-coordinates">No coordinates available</p>
+              )}
+              <div className="event-details">
+                <p>
+                  Date: {new Date(event.date).toLocaleDateString()} Time: {event.time}
+                </p>
+                <p>Info: {event.description}</p>
+                <Link onClick={() => openGoogleMaps(event)}>{event.location}</Link>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p align="center">
+            {selectedDate
+              ? `No events on ${selectedDate.toLocaleDateString()}`
+              : 'No events found for the selected date.'}
+          </p>
+        )}
+      </div>
+      <div className="right-column">
+        <div className='sticky-calendar'>
+        <CalendarComponent events={events} onDateChange={handleDateChange} />
+        </div>
+        <div>
+        </div>
+      </div>
     </div>
   );
 };

@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { useAuth } from '../AuthContext';
 import { GoogleMap, Marker, Autocomplete } from '@react-google-maps/api';
+import '../Home.css';
 
 const CreateEvent = ({ onSubmit }) => {
   const { userId } = useAuth();
@@ -109,14 +110,14 @@ const CreateEvent = ({ onSubmit }) => {
 
   return (
     <div>
-      <h3>Create Event</h3>
-      <div style={{ marginTop: '10px', marginBottom: '10px' }}>
+      <h4>Create Event</h4>
+      <div >
+        <div>
         <strong>Selected Address:</strong> {formData.location}
       </div>
-      <div style={{ display: 'flex', gap: '20px' }}>
-        <div style={{ height: '400px', width: '50%' }}>
+        <div className='map-container'>
           <GoogleMap
-            mapContainerStyle={{ height: '100%', width: '100%' }}
+            mapContainerStyle={{ height: '100%', width: '90%' }}
             center={mapCenter}
             zoom={15}
             onClick={handleMapClick}

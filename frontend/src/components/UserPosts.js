@@ -1,7 +1,5 @@
 import React, { useEffect } from 'react';
 import { useAuth } from '../AuthContext';
-import { Link } from 'react-router-dom';
-import CreateEvent from './CreateEvent';
 
 const UserPosts = () => {
   const { posts, postCount, latestPost, fetchUserPosts, userInfo } = useAuth();

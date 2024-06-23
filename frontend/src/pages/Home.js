@@ -25,6 +25,11 @@ const Home = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [message, setMessage] = useState('');
   const [commentsVisible, setCommentsVisible] = useState({}); // Track which events have comments visible
+  const [showCalendarPanel, setShowCalendarPanel] = useState(false);
+
+  const toggleCalendarPanel = () => {
+    setShowCalendarPanel((prevState) => !prevState);
+  };
 
   const fetchEvents = useCallback(async () => {
     try {
@@ -133,6 +138,7 @@ const Home = () => {
 
   const handleDateChange = useCallback((newDate) => {
     setSelectedDate(newDate);
+    setShowCalendarPanel(false);
   }, []);
 
   const handleFormSubmit = useCallback(async (formData) => {
@@ -169,6 +175,7 @@ const Home = () => {
   return (
     <div className="home-container">
       <div className="left-column">
+      <div className='sticky-menu'>
         {token ? (
           <>
             {userInfo ? (
@@ -184,20 +191,25 @@ const Home = () => {
             <button onClick={handleProfileClick}>
               {showProfile ? 'Cancel' : 'Profile'}
             </button>
+            <button className='toggle-calendar-button' onClick={toggleCalendarPanel}>
+              {showCalendar ? 'Cancel' : 'Calendar'}
+            </button>
             <button><Logout /></button>
             <p>{message && <p>{message}</p>}</p>
           </>
         ) : (
           <>
+            <div className='welcome'>
             <h3>Welcome to the gathering</h3>
+            </div>
             <button onClick={handleLoginClick}>
               {showLogin ? 'Cancel' : 'Login'}
             </button>
+            <button className='toggle-calendar-button' onClick={toggleCalendarPanel}>
+          {showCalendar ? 'Cancel' : 'Calendar'}
+        </button>
             <button onClick={handleRegisterClick}>
               {showRegister ? 'Cancel' : 'Register'}
-            </button>
-            <button onClick={handleCalendarClick}>
-              {showCalendar ? 'Cancel' : 'Calendar'}
             </button>
             {showRegister && <Register />}
             {showLogin && <Login />}
@@ -212,6 +224,7 @@ const Home = () => {
         )}
         {showProfile && <Profile />}
         {showCreateEvent && <CreateEvent onSubmit={handleFormSubmit} />}
+        </div>
       </div>
       <div className="events-column">
         <div className="container-header">
@@ -257,9 +270,11 @@ const Home = () => {
           </p>
         )}
       </div>
-      <div className="right-column">
+      <div className={`right-column ${showCalendarPanel ? 'show': ''}`}>
         <div className='sticky-calendar'>
+          <div className='welcome'>
           <CalendarComponent events={events} onDateChange={handleDateChange} />
+          </div>
         </div>
       </div>
     </div>

@@ -38,10 +38,7 @@ input {
 }
 
 .left-column{
-  border-radius: 10px;
-  border-style:groove;
-  border-width: 1px;
-  margin: 0 10px 0 0;
+  
 }
 
 .events-column{
@@ -97,21 +94,53 @@ input {
   top: 20px; /* Adjust the value based on your header height or desired offset */
 }
 
+.sticky-menu {
+  position: sticky;
+  top: 30px; /* Adjust the value based on your header height or desired offset */
+}
+
 .sticky-menu{
   position: sticky;
   top: 25px; /* Adjust the value based on your header height or desired offset */
 }
 
+.right-column.show {
+  flex: 1; /* Show on larger screens */
+  width: auto;
+  right: 0; /* Position on-screen */
+}
+
+.toggle-calendar-button {
+  display: none; /* Hide the button on larger screens */
+}
+
+
 @media (max-width: 768px) {
-  
-  .right-column {
-    display: block; /* Show on larger screens */
+  body {
+    overflow-x: hidden; /* Hindra horisontell scrollning */
+  }
+
+  .toggle-calendar-button {
+    display:inline; /* Show the button on smaller screens */
   }
 
   .home-container {
     flex-direction: column;
   }
 
-  
+  .left-column {
+    margin-bottom: 30px;
+  }
 
+  .right-column {
+    flex: 0; /* Initially hide on smaller screens */
+    width: 0;
+    overflow: hidden;
+    transition: width 0.3s ease-out, flex 0.3s ease-out;
+    position: absolute;
+    top: 0;
+    right: -100%; /* Position off-screen to the right */
+    
+  }
+  
 }

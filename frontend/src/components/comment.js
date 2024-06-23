@@ -3,7 +3,7 @@ import { useAuth } from '../AuthContext';
 import API from '../api';
 
 const Comment = ({ eventId }) => {
-  const { token } = useAuth();
+  const { token, userInfo } = useAuth();
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
   const [loading, setLoading] = useState(false);
@@ -52,11 +52,7 @@ const Comment = ({ eventId }) => {
         <p>Loading comments...</p>
       ) : (
         <>
-          {comments.map(comment => (
-            <div key={comment._id} className="comment">
-              <p>{new Date(comment.createdAt).toLocaleDateString()} / {comment.user.username}: {comment.text}</p>
-            </div>
-          ))}
+         {userInfo ? (
           <form onSubmit={handleCommentSubmit}>
             <input 
               type="text" 
@@ -67,6 +63,14 @@ const Comment = ({ eventId }) => {
             />
             <button type="submit">Submit</button>
           </form>
+          ) : (
+            <p><strong>Please Sign-in to comment</strong></p>
+          )}
+          {comments.map(comment => (
+            <div key={comment._id} className="comment">
+              <p>{new Date(comment.createdAt).toLocaleDateString()} / {comment.user.username}: {comment.text}</p>
+            </div>
+          ))}
         </>
       )}
     </div>

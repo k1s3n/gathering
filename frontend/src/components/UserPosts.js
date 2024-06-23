@@ -17,14 +17,14 @@ const UserPosts = () => {
       <p style={{fontWeight: 'bold'}}>Total Posts: {postCount}</p>
       {latestPost && (
         <div>
-          <h4> Latest Post</h4>
+          <h3> Latest Post</h3>
           <p>{latestPost.title}</p>
           <p>{latestPost.description}</p>
           <p>{new Date(latestPost.date).toLocaleDateString()}</p>
         </div>
       )}
       -----------
-      <h3>{userInfo.username}s Posts</h3>
+      <h3> All Posts</h3>
       {posts.length > 0 ? (
         posts.map((post) => (
           <div key={post._id}>

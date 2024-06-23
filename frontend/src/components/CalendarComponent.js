@@ -1,10 +1,9 @@
-// CalendarComponent.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import Calendar from 'react-calendar';
 import PropTypes from 'prop-types';
 import 'react-calendar/dist/Calendar.css'; // Import CSS for the calendar
 
-const CalendarComponent = ({ events, onDateChange }) => {
+const CalendarComponent = forwardRef(({ events, onDateChange }, ref) => {
   const [date, setDate] = useState(null); // Initial date state set to null
 
   useEffect(() => {
@@ -33,10 +32,15 @@ const CalendarComponent = ({ events, onDateChange }) => {
     onDateChange(newDate);
   };
 
-  const handleClearDate = () => {
-    setDate(null); // Set date state to null to clear the selected date
-    onDateChange(null); // Optionally notify parent component about cleared date
+  const clearSelectedDate = () => {
+    setDate(null);
+    onDateChange(null); // Notify parent component about cleared date if needed
   };
+
+  // Expose clearSelectedDate function to parent component via ref
+  useImperativeHandle(ref, () => ({
+    clearSelectedDate
+  }));
 
   return (
     <div>
@@ -49,10 +53,10 @@ const CalendarComponent = ({ events, onDateChange }) => {
           tileDisabled={tileDisabled}
         />
       </div>
-      <button style={{ marginTop: '5px' , marginBottom: '5px'}} onClick={handleClearDate}>Clear Date</button>
+      <button style={{ marginTop: '5px' }} onClick={clearSelectedDate}>Clear Date</button>
     </div>
   );
-};
+});
 
 CalendarComponent.propTypes = {
   events: PropTypes.arrayOf(

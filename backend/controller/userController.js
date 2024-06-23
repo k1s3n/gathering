@@ -197,6 +197,29 @@ const createComment = async (req, res) => {
   }
 };
 
+const updateEvent = async (req, res) => {
+  const { eventId } = req.params;
+  const { title, description, date, time, location, latitude, longitude } = req.body;
+  try {
+    const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+    event.title = title || event.title;
+    event.description = description || event.description;
+    event.date = date || event.date;
+    event.time = time || event.time;
+    event.location = location || event.location;
+    event.latitude = latitude || event.latitude;
+    event.longitude = longitude || event.longitude;
+    await event.save();
+    res.json({ message: 'Event updated successfully' });
+  } catch (error) {
+    console.error('Error updating event:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
 
 
 
@@ -208,7 +231,8 @@ module.exports = {
     updateUserInfo,
     getUserPosts,
     getComments,
-    createComment
+    createComment,
+    deleteEvent,
 
 
   };

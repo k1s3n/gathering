@@ -49,6 +49,9 @@ const Profile = () => {
       <h3>Profile</h3>
       {userInfo ? (
         <>
+        <div>
+          <img src={userInfo.profilePicture || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'} alt="Profile" style={{ width: '100px', height: '100px', borderRadius: '50%' , borderStyle: 'solid', borderColor: 'black', borderWidth: '1px' }} />
+        </div>
           <div>
           <label htmlFor="email">Email: </label>
             {editMode === 'email' ? (

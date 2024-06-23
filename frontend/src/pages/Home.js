@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { useAuth } from '../AuthContext';
 import API from '../api';
 import Login from '../components/Login';
@@ -32,8 +32,10 @@ const Home = () => {
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const [message, setMessage] = useState('');
-  const [commentsVisible, setCommentsVisible] = useState({}); // Track which events have comments visible
+  const [commentsVisible, setCommentsVisible] = useState({});
   const [showCalendarPanel, setShowCalendarPanel] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const calendarRef = useRef(null); // Ref to access CalendarComponent instance
 
   const toggleCalendarPanel = () => {
     setShowCalendarPanel((prevState) => !prevState);
@@ -69,37 +71,71 @@ const Home = () => {
     }
   }, []);
 
+  const handleSearchChange = useCallback((event) => {
+    const query = event.target.value.toLowerCase().trim();
+    console.log('Search query:', query);
+    setFilteredEvents(events.filter(event => {
+      console.log('Event:', event.title, event.location, event.date);
+      // Check if the query matches title, location, or date
+      return (
+        event.title.toLowerCase().includes(query) ||
+        event.location.toLowerCase().includes(query) ||
+        new Date(event.date).toLocaleDateString('en-GB').includes(query)
+      );
+    }));
 
-  const filterEventsByDate = useCallback((date) => {
-    if (date) {
-      const filtered = events.filter((event) => new Date(event.date).toLocaleDateString() === date.toLocaleDateString());
-      const sorted = filtered.sort((a, b) => {
-        const timeA = parseInt(a.time.replace(':', ''), 10);
-        const timeB = parseInt(b.time.replace(':', ''), 10);
-        return timeA - timeB;
-      });
-      setFilteredEvents(sorted);
-    } else {
-      const sorted = events.slice().sort((a, b) => {
-        const dateA = new Date(a.date);
-        const dateB = new Date(b.date);
-        if (dateA < dateB) return -1;
-        if (dateA > dateB) return 1;
-        const timeA = parseInt(a.time.replace(':', ''), 10);
-        const timeB = parseInt(b.time.replace(':', ''), 10);
-        return timeA - timeB;
-      });
-      setFilteredEvents(sorted);
-    }
+    setSearchQuery(event.target.value);
   }, [events]);
+
+  const handleSearchFieldClick = useCallback(() => {
+    setSearchQuery('');
+    // Clear selected date in CalendarComponent
+    if (calendarRef.current) {
+      calendarRef.current.clearSelectedDate();
+    }
+  }, []);
+
+  const filterEvents = useCallback(() => {
+    let filtered = events.slice(); // Start with all events
+
+    // Filter by selected date
+    if (selectedDate) {
+      filtered = filtered.filter(
+        (event) => new Date(event.date).toLocaleDateString() === selectedDate.toLocaleDateString()
+      );
+    }
+
+    // Filter by search query
+    if (searchQuery.trim() !== '') {
+      const lowerCaseQuery = searchQuery.trim().toLowerCase();
+      filtered = filtered.filter((event) =>
+        event.title.toLowerCase().includes(lowerCaseQuery) ||
+        event.location.toLowerCase().includes(lowerCaseQuery) ||
+        new Date(event.date).toLocaleDateString('en-GB').includes(lowerCaseQuery)
+      );
+    }
+
+    // Sort by date and time
+    const sorted = filtered.sort((a, b) => {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      if (dateA < dateB) return -1;
+      if (dateA > dateB) return 1;
+      const timeA = parseInt(a.time.replace(':', ''), 10);
+      const timeB = parseInt(b.time.replace(':', ''), 10);
+      return timeA - timeB;
+    });
+
+    setFilteredEvents(sorted);
+  }, [events, selectedDate, searchQuery]);
 
   useEffect(() => {
     fetchEvents();
   }, [fetchEvents, token]);
 
   useEffect(() => {
-    filterEventsByDate(selectedDate);
-  }, [events, selectedDate, filterEventsByDate]);
+    filterEvents();
+  }, [events, selectedDate, searchQuery, filterEvents]);
 
   useEffect(() => {
     setShowCalendar(false);
@@ -132,10 +168,6 @@ const Home = () => {
     handleToggleState(setShowProfile, showProfile);
   }, [handleToggleState, showProfile]);
 
-  const handleCalendarClick = useCallback(() => {
-    handleToggleState(setShowCalendar, showCalendar);
-  }, [handleToggleState, showCalendar]);
-
   const handleCommentClick = (eventId) => {
     setCommentsVisible((prevState) => ({
       ...prevState,
@@ -143,10 +175,11 @@ const Home = () => {
     }));
   };
 
-
   const handleDateChange = useCallback((newDate) => {
     setSelectedDate(newDate);
     setShowCalendarPanel(false);
+    setCommentsVisible(false);
+    setSearchQuery('');
   }, []);
 
   const handleFormSubmit = useCallback(async (formData) => {
@@ -158,6 +191,7 @@ const Home = () => {
       if (response.status === 201) {
         fetchEvents();
         setShowCreateEvent(false);
+        setShowCalendarPanel(false);
         setMessage('Event created successfully');
       } else {
         setMessage('Failed to create event');
@@ -183,70 +217,78 @@ const Home = () => {
   return (
     <div className="home-container">
       <div className="left-column">
-      <div className='sticky-menu'>
-        {token ? (
-          <>
-            {userInfo ? (
+        <div className='sticky-menu'>
+          {token ? (
+            <>
+              {userInfo ? (
+                <div className='welcome'>
+                  <h3>Welcome {userInfo.username} </h3>
+                </div>
+              ) : (
+                <p>Loading user info...</p>
+              )}
+              <button onClick={handleCreateEventClick}>
+                {showCreateEvent ? 'Cancel' : 'Create Event'}
+              </button>
+              <button onClick={handleProfileClick}>
+                {showProfile ? 'Cancel' : 'Profile'}
+              </button>
+              <button className='toggle-calendar-button' onClick={toggleCalendarPanel}>
+                {showCalendar ? 'Cancel' : 'Calendar'}
+              </button>
+              <button><Logout /></button>
+              <p>{message && <p>{message}</p>}</p>
+            </>
+          ) : (
+            <>
               <div className='welcome'>
-                <h3>Welcome {userInfo.username} </h3>
+                <h3>Welcome to the gathering</h3>
               </div>
-            ) : (
-              <p>Loading user info...</p>
-            )}
-            <button onClick={handleCreateEventClick}>
-              {showCreateEvent ? 'Cancel' : 'Create Event'}
-            </button>
-            <button onClick={handleProfileClick}>
-              {showProfile ? 'Cancel' : 'Profile'}
-            </button>
-            <button className='toggle-calendar-button' onClick={toggleCalendarPanel}>
-              {showCalendar ? 'Cancel' : 'Calendar'}
-            </button>
-            <button><Logout /></button>
-            <p>{message && <p>{message}</p>}</p>
-          </>
-        ) : (
-          <>
-            <div className='welcome'>
-            <h3>Welcome to the gathering</h3>
-            </div>
-            <button onClick={handleLoginClick}>
-              {showLogin ? 'Cancel' : 'Login'}
-            </button>
-            <button className='toggle-calendar-button' onClick={toggleCalendarPanel}>
-          {showCalendar ? 'Cancel' : 'Calendar'}
-        </button>
-            <button onClick={handleRegisterClick}>
-              {showRegister ? 'Cancel' : 'Register'}
-            </button>
-            {showRegister && <Register />}
-            {showLogin && <Login />}
-            {!showLogin && !showRegister && (
-              <p>
-                You must be logged in to create an event.{' '}
-                <Link onClick={handleLoginClick}>Login</Link> or{' '}
-                <Link onClick={handleRegisterClick}>Register</Link>
-              </p>
-            )}
-          </>
-        )}
-        {showProfile && <Profile />}
-        {showCreateEvent && <CreateEvent onSubmit={handleFormSubmit} />}
+              <button onClick={handleLoginClick}>
+                {showLogin ? 'Cancel' : 'Login'}
+              </button>
+              <button className='toggle-calendar-button' onClick={toggleCalendarPanel}>
+                {showCalendar ? 'Cancel' : 'Calendar'}
+              </button>
+              <button onClick={handleRegisterClick}>
+                {showRegister ? 'Cancel' : 'Register'}
+              </button>
+              {showRegister && <Register />}
+              {showLogin && <Login />}
+              {!showLogin && !showRegister && (
+                <p>
+                  You must be logged in to create an event.{' '}
+                  <Link onClick={handleLoginClick}>Login</Link> or{' '}
+                  <Link onClick={handleRegisterClick}>Register</Link>
+                </p>
+              )}
+            </>
+          )}
+          {showProfile && <Profile />}
+          {showCreateEvent && <CreateEvent onSubmit={handleFormSubmit} />}
         </div>
       </div>
       <div className="events-column">
         <div className="container-header">
-          <h1>Events</h1>
+          <h1>Gatherings</h1>
+          <input
+            type="text"
+            placeholder="Search gatherings, locations or dates"
+            value={searchQuery}
+            onChange={handleSearchChange}
+            onClick={handleSearchFieldClick} // Clear search query on click
+            className="search-input"
+          />
         </div>
         {filteredEvents.length > 0 ? (
           filteredEvents.map((event) => (
             <div className="event-container" key={event._id}>
               <div className="event-header">
-              <h2>{event.title}</h2>
-              <p className='date'>
+                <h3>{event.title}</h3>
+                <p className='date'>
                   Date: {new Date(event.date).toLocaleDateString('en-GB', options)} Time: {event.time}
                 </p>
-                </div>
+              </div>
               {event.latitude && event.longitude ? (
                 <div className="map-container">
                   <GoogleMap
@@ -264,26 +306,30 @@ const Home = () => {
                 <p>Info: {event.description}</p>
                 <Link onClick={() => openGoogleMaps(event)}>{event.location}</Link>
               </div>
-              <div style={{textAlign: 'center'}}>
-              <Link onClick={() => handleCommentClick(event._id)}>
+              <div style={{ textAlign: 'center' }}>
+                <Link onClick={() => handleCommentClick(event._id)}>
                   <h3>Comments ({event.commentCount || 0})</h3>
                 </Link>
                 {commentsVisible[event._id] && <Comment eventId={event._id} />}
-            </div>
+              </div>
             </div>
           ))
         ) : (
           <p style={{ textAlign: 'center' }}>
             {selectedDate
               ? `No events on ${selectedDate.toLocaleDateString()}`
-              : 'No events found for the selected date.'}
+              : 'No events found for the selected date or search criteria.'}
           </p>
         )}
       </div>
-      <div className={`right-column ${showCalendarPanel ? 'show': ''}`}>
+      <div className={`right-column ${showCalendarPanel ? 'show' : ''}`}>
         <div className='sticky-calendar'>
           <div className='welcome'>
-          <CalendarComponent events={events} onDateChange={handleDateChange} />
+            <CalendarComponent
+              ref={calendarRef} // Pass ref to CalendarComponent
+              events={events}
+              onDateChange={handleDateChange}
+            />
           </div>
         </div>
       </div>

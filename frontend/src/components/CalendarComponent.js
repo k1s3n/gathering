@@ -49,7 +49,7 @@ const CalendarComponent = ({ events, onDateChange }) => {
           tileDisabled={tileDisabled}
         />
       </div>
-      <button onClick={handleClearDate}>Clear Date</button>
+      <button style={{ marginTop: '5px' , marginBottom: '5px'}} onClick={handleClearDate}>Clear Date</button>
     </div>
   );
 };

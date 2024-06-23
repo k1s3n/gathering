@@ -13,6 +13,14 @@ import { Link } from 'react-router-dom';
 import '../Home.css'; // Ensure you have the correct path to your CSS file
 import '../css/calendar.css';
 
+// Example with custom options
+const options = {
+  weekday: 'long', // e.g., "Monday"
+  year: 'numeric', // e.g., "2023"
+  month: 'long', // e.g., "June"
+  day: 'numeric' // e.g., "23"
+};
+
 const Home = () => {
   const { token, userInfo, resetShowStateFlag } = useAuth();
   const [events, setEvents] = useState([]);
@@ -233,7 +241,12 @@ const Home = () => {
         {filteredEvents.length > 0 ? (
           filteredEvents.map((event) => (
             <div className="event-container" key={event._id}>
+              <div className="event-header">
               <h2>{event.title}</h2>
+              <p className='date'>
+                  Date: {new Date(event.date).toLocaleDateString('en-GB', options)} Time: {event.time}
+                </p>
+                </div>
               {event.latitude && event.longitude ? (
                 <div className="map-container">
                   <GoogleMap
@@ -248,9 +261,6 @@ const Home = () => {
                 <p className="no-coordinates">No coordinates available</p>
               )}
               <div className="event-details">
-                <p>
-                  Date: {new Date(event.date).toLocaleDateString()} Time: {event.time}
-                </p>
                 <p>Info: {event.description}</p>
                 <Link onClick={() => openGoogleMaps(event)}>{event.location}</Link>
               </div>

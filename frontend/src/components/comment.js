@@ -48,7 +48,6 @@ const Comment = ({ eventId }) => {
 
   return (
     <div className="comments-section">
-      <h3>Comments</h3>
       {loading ? (
         <p>Loading comments...</p>
       ) : (

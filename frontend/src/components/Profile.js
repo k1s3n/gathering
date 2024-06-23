@@ -47,7 +47,6 @@ const Profile = () => {
   return (
     <div>
       <h3>Profile</h3>
-      {message && <p>{message}</p>}
       {userInfo ? (
         <>
           <div>
@@ -126,9 +125,9 @@ const Profile = () => {
               </>
             )}
           </div>
-          
+          <div style={{ marginTop: '20px' }}>{message}</div>
           <div>
-            <button style={{ marginTop: '20px' }} onClick={handlePostsClick}>{showUserPosts ? 'Hide' : 'Post Details'} </button>
+            <button style={{ marginTop: '20px' }} onClick={handlePostsClick}>{showUserPosts ? 'Hide Post Details' : 'Post Details'} </button>
             {showUserPosts && <UserPosts />}
           </div>
         </>

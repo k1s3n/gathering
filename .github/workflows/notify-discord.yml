@@ -11,7 +11,7 @@ jobs:
 
     steps:
     - name: Notify Discord
-      uses: discord-actions/message@v2
+      uses: discord-actions/message@v1.8
       with:
         webhookUrl: ${{ secrets.DISCORD_WEBHOOK_URL }}
         message: "Hello, from Github"

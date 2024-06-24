@@ -10,10 +10,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Notify Discord
-      uses: discord-actions/message@v1.8
-      with:
-        webhookUrl: ${{ secrets.DISCORD_WEBHOOK_URL }}
-        message: "Hello, from Github"
-        username: "Github"
-        avatar: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
+      - name: send message
+        uses: appleboy/discord-action@master
+        with:
+          webhook_id: ${{ secrets.WEBHOOK_ID }}
+          webhook_token: ${{ secrets.WEBHOOK_TOKEN }}
+          color: "#48f442"
+          username: "GitHub Bot"
+          message: "A new commit has been pushed with custom color."
+          

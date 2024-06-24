@@ -15,5 +15,3 @@ jobs:
         with:
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK_URL }}
           message: "Hello, from Github"
-          username: "Github"
-          avatar: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"

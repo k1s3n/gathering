@@ -39,12 +39,10 @@ jobs:
         with:
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK_URL }}
           message: |
-            **Build Status**: SUCCESS
+            **Build Status**: **<font color="green">**\*\*SUCCESS\*\***</font>
             **Commit Message**: ${{ env.COMMIT_MESSAGE }}
             **Author**: ${{ env.AUTHOR_NAME }}
-
             **Affected Branch**: ${{ env.AFFECTED_BRANCH }}
-
             **Commit URL**: [View commit](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
             ${{ env.PR_URL && format('\n**Pull Request URL**: {0}', env.PR_URL) }}
 
@@ -54,12 +52,9 @@ jobs:
         with:
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK_URL }}
           message: |
-            **Build Status**: FAILURE
+            **Build Status**: **<font color="red">**\*\*FAILURE\*\***</font>
             **Commit Message**: ${{ env.COMMIT_MESSAGE }}
             **Author**: ${{ env.AUTHOR_NAME }}
-
-
             **Affected Branch**: ${{ env.AFFECTED_BRANCH }}
-            
             **Commit URL**: [View commit](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
             ${{ env.PR_URL && format('\n**Pull Request URL**: {0}', env.PR_URL) }}

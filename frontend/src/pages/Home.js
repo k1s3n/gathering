@@ -327,7 +327,7 @@ const Home = () => {
         <div className='sticky-calendar'>
           <div className='welcome'>
             <CalendarComponent
-              ref={calendarRef} // Pass ref to CalendarComponenttt
+              ref={calendarRef} // Pass ref to CalendarComponentttt
               events={events}
               onDateChange={handleDateChange}
             />

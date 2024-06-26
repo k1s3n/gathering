@@ -25,7 +25,13 @@ jobs:
 
       - name: Get changes
         id: changes
-        run: echo "CHANGES=$(git diff --name-only ${{ github.sha }}^ ${{ github.sha }})" >> $GITHUB_ENV
+        run: |
+          git diff --name-only ${{ github.sha }}^ ${{ github.sha }} > changed_files.txt
+          if [ -s changed_files.txt ]; then
+            echo "CHANGES=$(cat changed_files.txt)" >> $GITHUB_ENV
+          else
+            echo "CHANGES=No changes detected" >> $GITHUB_ENV
+          fi
 
       - name: Set event context
         run: |
@@ -34,6 +40,17 @@ jobs:
           else
             echo "PR_URL=" >> $GITHUB_ENV
           fi
+
+      - name: Generate URLs to changes
+        if: ${{ steps.changes.outputs.CHANGES != 'No changes detected' }}
+        id: generate_urls
+        run: |
+          URL_PREFIX="https://github.com/${{ github.repository }}/commit/${{ github.sha }}/files#diff-"
+          CHANGES_URLS=""
+          while IFS= read -r file; do
+            CHANGES_URLS+="\n[${file}](${URL_PREFIX}${file})"
+          done < changed_files.txt
+          echo "CHANGES_URLS=$CHANGES_URLS" >> $GITHUB_ENV
 
       - name: Notify Discord on success
         if: success()
@@ -44,9 +61,9 @@ jobs:
             **Build Status**: SUCCESS
             **Commit Message**: ${{ env.COMMIT_MESSAGE }}
             **Author**: ${{ env.AUTHOR_NAME }}
-            **Changes**:
-            ${{ env.CHANGES }}
+            **Changes**:${{ env.CHANGES }}
             ${{ env.PR_URL && format('\n**Pull Request URL**: {0}', env.PR_URL) }}
+            ${{ env.CHANGES_URLS }}
 
       - name: Notify Discord on failure
         if: failure()
@@ -57,6 +74,6 @@ jobs:
             **Build Status**: FAILURE
             **Commit Message**: ${{ env.COMMIT_MESSAGE }}
             **Author**: ${{ env.AUTHOR_NAME }}
-            **Changes**:
-            ${{ env.CHANGES }}
+            **Changes**:${{ env.CHANGES }}
             ${{ env.PR_URL && format('\n**Pull Request URL**: {0}', env.PR_URL) }}
+            ${{ env.CHANGES_URLS }}

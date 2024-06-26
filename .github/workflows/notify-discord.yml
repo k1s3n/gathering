@@ -39,7 +39,7 @@ jobs:
           git diff --name-only ${{ github.sha }}^..${{ github.sha }} > changed_files.txt
           echo "AFFECTED_FILES=$(cat changed_files.txt)" >> $GITHUB_ENV
 
-      - name: Notify Discord on success
+      - name: Notify Discord on success 
         if: success()
         uses: discord-actions/message@v2
         with:

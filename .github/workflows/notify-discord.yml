@@ -33,26 +33,11 @@ jobs:
             echo "AFFECTED_BRANCH=${{ github.ref }}" >> $GITHUB_ENV
           fi
 
-      - name: Check for changes
-        id: check_changes
+      - name: List changed files
+        id: list_files
         run: |
-          if git diff --quiet --exit-code ${{ github.sha }}^1 ${{ github.sha }}; then
-            echo "CHANGES=No changes detected" >> $GITHUB_ENV
-          else
-            git diff --name-only ${{ github.sha }}^1 ${{ github.sha }} > changed_files.txt
-            echo "CHANGES=$(cat changed_files.txt)" >> $GITHUB_ENV
-          fi
-
-      - name: Set changed files URLs
-        if: ${{ steps.check_changes.outputs.CHANGES != 'No changes detected' }}
-        id: generate_urls
-        run: |
-          URL_PREFIX="https://github.com/${{ github.repository }}/commit/${{ github.sha }}/files#diff-"
-          CHANGES_URLS=""
-          while IFS= read -r file; do
-            CHANGES_URLS+="[${file}](${URL_PREFIX}${file})\n"
-          done < changed_files.txt
-          echo "CHANGES_URLS=${CHANGES_URLS}" >> $GITHUB_ENV
+          git diff --name-only ${{ github.sha }}^..${{ github.sha }} > changed_files.txt
+          echo "AFFECTED_FILES=$(cat changed_files.txt)" >> $GITHUB_ENV
 
       - name: Notify Discord on success
         if: success()
@@ -65,9 +50,8 @@ jobs:
             **Author**: ${{ env.AUTHOR_NAME }}
             **Affected Branch**: ${{ env.AFFECTED_BRANCH }}
             **Affected Files**:
-            ${{ env.CHANGES }}
+            ${{ env.AFFECTED_FILES }}
             **Commit URL**: [View commit](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
-
 
       - name: Notify Discord on failure
         if: failure()
@@ -80,5 +64,5 @@ jobs:
             **Author**: ${{ env.AUTHOR_NAME }}
             **Affected Branch**: ${{ env.AFFECTED_BRANCH }}
             **Affected Files**:
-            ${{ env.CHANGES }}
+            ${{ env.AFFECTED_FILES }}
             **Commit URL**: [View commit](https://github.com/${{ github.repository }}/commit/${{ github.sha }})

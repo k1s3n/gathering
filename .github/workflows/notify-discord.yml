@@ -67,7 +67,7 @@ jobs:
             **Affected Files**:
             ${{ env.CHANGES }}
             **Commit URL**: [View commit](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
-            ${{ env.PR_URL && format('\n**Pull Request URL**: {0}', env.PR_URL) }}
+
 
       - name: Notify Discord on failure
         if: failure()
@@ -82,4 +82,3 @@ jobs:
             **Affected Files**:
             ${{ env.CHANGES }}
             **Commit URL**: [View commit](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
-            ${{ env.PR_URL && format('\n**Pull Request URL**: {0}', env.PR_URL) }}

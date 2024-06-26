@@ -37,6 +37,7 @@ const Home = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const calendarRef = useRef(null); // Ref to access CalendarComponent instance
 
+
   const toggleCalendarPanel = () => {
     setShowCalendarPanel((prevState) => !prevState);
   };
@@ -214,6 +215,11 @@ const Home = () => {
     window.open(url, '_blank');
   }, []);
 
+  
+  const handleMessageUpdate = useCallback((newMessage) => {
+    setMessage(newMessage);
+  }, []);
+
   return (
     <div className="home-container">
       <div className="left-column">
@@ -264,7 +270,7 @@ const Home = () => {
               )}
             </>
           )}
-          {showProfile && <Profile />}
+          {showProfile && <Profile onUpdateMessage={handleMessageUpdate} />} {/* Skicka callback-funktion som prop */}
           {showCreateEvent && <CreateEvent onSubmit={handleFormSubmit} />}
         </div>
       </div>
@@ -272,8 +278,8 @@ const Home = () => {
         <div className="container-header">
           <h1>Gatherings</h1>
           <input
-            type="text"
-            placeholder="Search gatherings, locations or dates"
+            type="search"
+            placeholder="Search for gatherings, locations or dates"
             value={searchQuery}
             onChange={handleSearchChange}
             onClick={handleSearchFieldClick} // Clear search query on click
@@ -284,7 +290,7 @@ const Home = () => {
           filteredEvents.map((event) => (
             <div className="event-container" key={event._id}>
               <div className="event-header">
-                <h3>{event.title}</h3>
+                <h2>{event.title}</h2>
                 <p className='date'>
                   Date: {new Date(event.date).toLocaleDateString('en-GB', options)} Time: {event.time}
                 </p>

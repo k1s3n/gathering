@@ -3,14 +3,13 @@ import { useAuth } from '../AuthContext';
 import UserPosts from './UserPosts';
 
 
-const Profile = () => {
+const Profile = ({ onUpdateMessage }) => {
   const { userInfo, updateUserInfo } = useAuth();
   const [editMode, setEditMode] = useState(null); // Use null to indicate no editing
   const [email, setEmail] = useState('');
   const [firstname, setFirstname] = useState('');
   const [lastname, setLastname] = useState('');
   const [phone, setPhone] = useState('');
-  const [message, setMessage] = useState('');
   const [showUserPosts, setShowUserPosts] = useState(false);
 
   useEffect(() => {
@@ -31,12 +30,12 @@ const Profile = () => {
       if (field === 'phone') updatedInfo = { phone };
 
       const response = await updateUserInfo(updatedInfo);
-      setMessage(response?.message || '.:: User info updated successfully ::.');
+      onUpdateMessage(response?.message || '.:: User info updated successfully ::.');
 
       setEditMode(null); // Exit edit mode
     } catch (error) {
       console.error('Error updating user info:', error);
-      setMessage('Failed to update user info');
+      onUpdateMessage('Failed to update user info');
     }
   };
 
@@ -128,7 +127,7 @@ const Profile = () => {
               </>
             )}
           </div>
-          <div style={{ marginTop: '20px' }}>{message}</div>
+          <div style={{ marginTop: '20px' }}></div>
           <div>
             <button style={{ marginTop: '20px' }} onClick={handlePostsClick}>{showUserPosts ? 'Hide Post Details' : 'Post Details'} </button>
             {showUserPosts && <UserPosts />}

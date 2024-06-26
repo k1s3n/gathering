@@ -50,7 +50,7 @@ jobs:
           echo "URL_PREFIX=${URL_PREFIX}" >> $GITHUB_ENV
           CHANGES_URLS=""
           while IFS= read -r file; do
-            CHANGES_URLS+="\n[${file}](${URL_PREFIX}${file})"
+            CHANGES_URLS+="[${file}](${URL_PREFIX}${file})\n"
           done < changed_files.txt
           echo "CHANGES_URLS=${CHANGES_URLS}" >> $GITHUB_ENV
 

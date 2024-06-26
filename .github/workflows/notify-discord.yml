@@ -10,8 +10,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Notify Discord
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Get commit message
+        id: commit_message
+        run: echo "COMMIT_MESSAGE=$(git log -1 --pretty=format:'%s')" >> $GITHUB_ENV
+
+      - name: Notify Discord on success
+        if: success()
         uses: discord-actions/message@v2
         with:
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          message: "Hello, from Github"
+          message: |
+            **Build Status**: SUCCESS
+            **Commit Message**: ${{ env.COMMIT_MESSAGE }}
+
+      - name: Notify Discord on failure
+        if: failure()
+        uses: discord-actions/message@v2
+        with:
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          message: |
+            **Build Status**: FAILURE
+            **Commit Message**: ${{ env.COMMIT_MESSAGE }}

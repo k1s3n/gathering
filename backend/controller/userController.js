@@ -232,7 +232,6 @@ module.exports = {
     getUserPosts,
     getComments,
     createComment,
-    deleteEvent,
 
 
   };

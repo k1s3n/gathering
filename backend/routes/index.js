@@ -24,8 +24,6 @@ router.get('/comments/:eventId', userController.getComments);
 
 router.post('/comments/', authenticateToken, userController.createComment);
 
-router.put('/deleteEvent/:eventId', authenticateToken, userController.deleteEvent);
-
 
 // Define protected routes
 router.get('/protected', authenticateToken, (req, res) => {

@@ -23,6 +23,19 @@ jobs:
         id: author_name
         run: echo "AUTHOR_NAME=$(git log -1 --pretty=format:'%an')" >> $GITHUB_ENV
 
+      - name: Set branch name
+        run: echo "BRANCH_NAME=${{ github.ref }}" >> $GITHUB_ENV
+
+      - name: Check for changes
+        id: check_changes
+        run: |
+          if git diff --quiet --exit-code ${{ github.sha }}^1 ${{ github.sha }}; then
+            echo "CHANGES=No changes detected" >> $GITHUB_ENV
+          else
+            git diff --name-only ${{ github.sha }}^1 ${{ github.sha }} > changed_files.txt
+            echo "CHANGES=$(cat changed_files.txt)" >> $GITHUB_ENV
+          fi
+
       - name: Set event context
         run: |
           if [ "${{ github.event_name }}" == "pull_request" ]; then
@@ -30,6 +43,17 @@ jobs:
           else
             echo "PR_URL=" >> $GITHUB_ENV
           fi
+
+      - name: Generate URLs to changes
+        if: ${{ steps.check_changes.outputs.CHANGES != 'No changes detected' }}
+        id: generate_urls
+        run: |
+          URL_PREFIX="https://github.com/${{ github.repository }}/commit/${{ github.sha }}/files#diff-"
+          CHANGES_URLS=""
+          while IFS= read -r file; do
+            CHANGES_URLS+="[${file}](${URL_PREFIX}${file})\n"
+          done < changed_files.txt
+          echo "CHANGES_URLS=${CHANGES_URLS}" >> $GITHUB_ENV
 
       - name: Notify Discord on success
         if: success()
@@ -40,7 +64,12 @@ jobs:
             **Build Status**: SUCCESS
             **Commit Message**: ${{ env.COMMIT_MESSAGE }}
             **Author**: ${{ env.AUTHOR_NAME }}
-            **Commit URL**: [View commit](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
+            **Branch**: ${{ env.BRANCH_NAME }}
+            **Changes**:
+            ${{ env.CHANGES }}
+            ${{ env.PR_URL && format('\n**Pull Request URL**: {0}', env.PR_URL) }}
+            **Changed Files**:
+            ${{ env.CHANGES_URLS }}
 
       - name: Notify Discord on failure
         if: failure()
@@ -51,4 +80,9 @@ jobs:
             **Build Status**: FAILURE
             **Commit Message**: ${{ env.COMMIT_MESSAGE }}
             **Author**: ${{ env.AUTHOR_NAME }}
-            **Commit URL**: [View commit](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
+            **Branch**: ${{ env.BRANCH_NAME }}
+            **Changes**:
+            ${{ env.CHANGES }}
+            ${{ env.PR_URL && format('\n**Pull Request URL**: {0}', env.PR_URL) }}
+            **Changed Files**:
+            ${{ env.CHANGES_URLS }}

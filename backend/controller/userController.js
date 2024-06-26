@@ -178,7 +178,7 @@ const createComment = async (req, res) => {
 
     // Validate input fields
     if (!eventId || !text) {
-      return res.status(400).json({ error: 'Event ID and text are required fields' }); // Return error if eventId or text is missing
+      return res.status(400).json({ error: 'Event ID and text are required fields' }); 
     }
 
     // Create the comment

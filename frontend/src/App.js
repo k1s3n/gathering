@@ -8,7 +8,7 @@ import CalendarComponent from './components/CalendarComponent';
 import { AuthProvider, useAuth } from './AuthContext';
 import Profile from './components/Profile';
 import UserPosts from './components/UserPosts';
-import GoogleMapsLoader from './components/GoogleMapComponent';
+import GoogleMapsLoader from './components/GoogleMapComponent'; 
 import PropTypes from 'prop-types';
 
 const App = () => {

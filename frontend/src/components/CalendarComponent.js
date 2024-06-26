@@ -9,8 +9,7 @@ const CalendarComponent = forwardRef(({ events, onDateChange }, ref) => {
   useEffect(() => {
     // Ensure the calendar starts with today's date selected by default
     const today = new Date();
-    setDate(today);
-    onDateChange(today);
+    onDateChange(null);
   }, [onDateChange]);
 
   const tileContent = ({ date, view }) => {

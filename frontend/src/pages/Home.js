@@ -317,8 +317,7 @@ const Home = () => {
         ) : (
           <p style={{ textAlign: 'center' }}>
             {selectedDate
-              ? `No events on ${selectedDate.toLocaleDateString()}
-              \nChoose a date in the calender or hit 'Clear Date' to see all events.`
+              ? `No events on ${selectedDate.toLocaleDateString()}`
               : 'No events found for the selected date or search criteria.'}
           </p>
         )}

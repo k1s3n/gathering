@@ -15,20 +15,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set environment variables
-        run: |
-          echo "COMMIT_MESSAGE=$(git log -1 --pretty=format:'%s')" >> $GITHUB_ENV
-          echo "AUTHOR_NAME=$(git log -1 --pretty=format:'%an')" >> $GITHUB_ENV
+      - name: Get commit message
+        id: commit_message
+        run: echo "COMMIT_MESSAGE=$(git log -1 --pretty=format:'%s')" >> $GITHUB_ENV
 
-      - name: Get changes
-        id: changes
-        run: |
-          if git show --name-only --pretty=format: --no-patch ${{ github.sha }}^1 > /dev/null 2>&1; then
-            git diff --name-only ${{ github.sha }}^1 ${{ github.sha }} > changed_files.txt
-            echo "CHANGES=$(cat changed_files.txt)" >> $GITHUB_ENV
-          else
-            echo "CHANGES=No changes detected" >> $GITHUB_ENV
-          fi
+      - name: Get author name
+        id: author_name
+        run: echo "AUTHOR_NAME=$(git log -1 --pretty=format:'%an')" >> $GITHUB_ENV
+
       - name: Set event context
         run: |
           if [ "${{ github.event_name }}" == "pull_request" ]; then
@@ -36,18 +30,6 @@ jobs:
           else
             echo "PR_URL=" >> $GITHUB_ENV
           fi
-
-      - name: Generate URLs to changes
-        if: ${{ steps.changes.outputs.CHANGES != 'No changes detected' }}
-        id: generate_urls
-        run: |
-          URL_PREFIX="https://github.com/${{ github.repository }}/commit/${{ github.sha }}/files#diff-"
-          echo "URL_PREFIX=${URL_PREFIX}" >> $GITHUB_ENV
-          CHANGES_URLS=""
-          while IFS= read -r file; do
-            CHANGES_URLS+="\n[${file}](${URL_PREFIX}${file})"
-          done < changed_files.txt
-          echo "CHANGES_URLS=${CHANGES_URLS}" >> $GITHUB_ENV
 
       - name: Notify Discord on success
         if: success()
@@ -59,9 +41,8 @@ jobs:
             **Commit Message**: ${{ env.COMMIT_MESSAGE }}
             **Author**: ${{ env.AUTHOR_NAME }}
             **Changes**:
-            ${{ env.CHANGES }}
             ${{ env.PR_URL && format('\n**Pull Request URL**: {0}', env.PR_URL) }}
-            ${{ env.CHANGES_URLS }}
+            **Commit URL**: [View commit](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
 
       - name: Notify Discord on failure
         if: failure()
@@ -73,6 +54,5 @@ jobs:
             **Commit Message**: ${{ env.COMMIT_MESSAGE }}
             **Author**: ${{ env.AUTHOR_NAME }}
             **Changes**:
-            ${{ env.CHANGES }}
             ${{ env.PR_URL && format('\n**Pull Request URL**: {0}', env.PR_URL) }}
-            ${{ env.CHANGES_URLS }}
+            **Commit URL**: [View commit](https://github.com/${{ github.repository }}/commit/${{ github.sha }})

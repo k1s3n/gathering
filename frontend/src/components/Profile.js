@@ -30,8 +30,7 @@ const Profile = ({ onUpdateMessage }) => {
       if (field === 'phone') updatedInfo = { phone };
 
       const response = await updateUserInfo(updatedInfo);
-      onUpdateMessage(response?.message || '.:: User info updated successfully ::.');
-
+      onUpdateMessage(response?.message || 'Profile Updated!');
       setEditMode(null); // Exit edit mode
     } catch (error) {
       console.error('Error updating user info:', error);

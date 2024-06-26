@@ -1,4 +1,4 @@
-import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
+import React, { useState, forwardRef, useImperativeHandle } from 'react';
 import Calendar from 'react-calendar';
 import PropTypes from 'prop-types';
 import 'react-calendar/dist/Calendar.css'; // Import CSS for the calendar
@@ -6,11 +6,7 @@ import 'react-calendar/dist/Calendar.css'; // Import CSS for the calendar
 const CalendarComponent = forwardRef(({ events, onDateChange }, ref) => {
   const [date, setDate] = useState(null); // Initial date state set to null
 
-  useEffect(() => {
-    // Ensure the calendar starts with today's date selected by default
-    const today = new Date();
-    onDateChange(null);
-  }, [onDateChange]);
+  
 
   const tileContent = ({ date, view }) => {
     if (view === 'month') {

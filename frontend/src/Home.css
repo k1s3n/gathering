@@ -86,13 +86,6 @@ input {
   margin-bottom: 10px;
 }
 
-.map-container {
-  border-radius: 10px;
-  border-style: solid;
-  border-width: 1px;
-  margin: 0px;
-}
-
 .event-header h2{
   margin-top: 40px;
 }
@@ -127,11 +120,6 @@ input {
 .sticky-menu {
   position: sticky;
   top: 30px; /* Adjust the value based on your header height or desired offset */
-}
-
-.sticky-menu{
-  position: sticky;
-  top: 25px; /* Adjust the value based on your header height or desired offset */
 }
 
 .right-column.show {

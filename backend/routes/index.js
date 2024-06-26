@@ -20,9 +20,9 @@ router.put('/user/update', authenticateToken, userController.updateUserInfo);
 
 router.get('/user/posts', authenticateToken, userController.getUserPosts);
 
-router.get('/comments/:eventId', userController.getComments);
+router.get('/comments/:eventId', userController.getComments); // events with comments
 
-router.post('/comments/', authenticateToken, userController.createComment); // changes
+router.post('/comments/', authenticateToken, userController.createComment); // testing
 
 
 // Define protected routes

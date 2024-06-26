@@ -26,6 +26,7 @@ jobs:
       - name: Get changes
         id: changes
         run: |
+          git fetch --prune --unshallow
           if git show --name-only --pretty=format: --no-patch ${{ github.sha }}^1 > /dev/null 2>&1; then
             git diff --name-only ${{ github.sha }}^1 ${{ github.sha }} > changed_files.txt
             echo "CHANGES=$(cat changed_files.txt)" >> $GITHUB_ENV
@@ -46,11 +47,12 @@ jobs:
         id: generate_urls
         run: |
           URL_PREFIX="https://github.com/${{ github.repository }}/commit/${{ github.sha }}/files#diff-"
+          echo "URL_PREFIX=${URL_PREFIX}" >> $GITHUB_ENV
           CHANGES_URLS=""
           while IFS= read -r file; do
             CHANGES_URLS+="\n[${file}](${URL_PREFIX}${file})"
           done < changed_files.txt
-          echo "CHANGES_URLS=$CHANGES_URLS" >> $GITHUB_ENV
+          echo "CHANGES_URLS=${CHANGES_URLS}" >> $GITHUB_ENV
 
       - name: Notify Discord on success
         if: success()

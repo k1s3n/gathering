@@ -40,8 +40,6 @@ jobs:
             **Build Status**: SUCCESS
             **Commit Message**: ${{ env.COMMIT_MESSAGE }}
             **Author**: ${{ env.AUTHOR_NAME }}
-            **Changes**:
-            ${{ env.PR_URL && format('\n**Pull Request URL**: {0}', env.PR_URL) }}
             **Commit URL**: [View commit](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
 
       - name: Notify Discord on failure
@@ -53,6 +51,4 @@ jobs:
             **Build Status**: FAILURE
             **Commit Message**: ${{ env.COMMIT_MESSAGE }}
             **Author**: ${{ env.AUTHOR_NAME }}
-            **Changes**:
-            ${{ env.PR_URL && format('\n**Pull Request URL**: {0}', env.PR_URL) }}
             **Commit URL**: [View commit](https://github.com/${{ github.repository }}/commit/${{ github.sha }})

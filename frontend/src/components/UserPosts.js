@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useAuth } from '../AuthContext';
 
 const UserPosts = () => {
-  const { posts, postCount, latestPost, fetchUserPosts, userInfo } = useAuth();
+  const { posts, postCount, latestPost, fetchUserPosts } = useAuth();
 
   useEffect(() => {
     fetchUserPosts();

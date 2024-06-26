@@ -117,21 +117,30 @@ input {
   top: 20px; /* Adjust the value based on your header height or desired offset */
 }
 
+.sticky-discord {
+  position: sticky;
+  top: 420px; /* Adjust the value based on your header height or desired offset */
+}
+
 .sticky-menu {
   position: sticky;
   top: 30px; /* Adjust the value based on your header height or desired offset */
 }
 
 .right-column.show {
-  flex: 1; /* Show on larger screens */
+  flex: 1;
   width: auto;
   right: 0; /* Position on-screen */
 }
+
 
 .toggle-calendar-button {
   display: none; /* Hide the button on larger screens */
 }
 
+.toggle-discord-button {
+  display: none; /* Hide the button on larger screens */
+}
 
 
 
@@ -144,6 +153,10 @@ input {
     width: 100%;
   }
   .toggle-calendar-button {
+    display:inline; /* Show the button on smaller screens */
+  }
+
+  .toggle-discord-button {
     display:inline; /* Show the button on smaller screens */
   }
 
@@ -165,5 +178,18 @@ input {
     right: -100%; /* Position off-screen to the right */
     
   }
+
+  .right-column.show-calendar {
+    flex: 1;
+    width: auto;
+    right: 0; /* Position on-screen */
+  }
+
+  .right-column.show-discord {
+    flex: 1;
+    width: auto;
+    right: 0; /* Position on-screen */
+  }
+
   
 }

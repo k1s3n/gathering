@@ -8,6 +8,7 @@ import CreateEvent from '../components/CreateEvent';
 import Profile from '../components/Profile';
 import CalendarComponent from '../components/CalendarComponent';
 import Comment from '../components/comment';
+import WidgetBotComponent from '../components/widgetbot';
 import { GoogleMap, Marker } from '@react-google-maps/api';
 import { Link } from 'react-router-dom';
 import '../Home.css'; // Ensure you have the correct path to your CSS file
@@ -34,10 +35,14 @@ const Home = () => {
   const [message, setMessage] = useState('');
   const [commentsVisible, setCommentsVisible] = useState({});
   const [showCalendarPanel, setShowCalendarPanel] = useState(false);
+  const [showDiscordPanel, setShowDiscordPanel] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const calendarRef = useRef(null); // Ref to access CalendarComponent instance
 
 
+  const toggleDiscordPanel = () => {
+    setShowDiscordPanel((prevState) => !prevState);
+  }
   const toggleCalendarPanel = () => {
     setShowCalendarPanel((prevState) => !prevState);
   };
@@ -242,6 +247,9 @@ const Home = () => {
               <button className='toggle-calendar-button' onClick={toggleCalendarPanel}>
                 {showCalendar ? 'Cancel' : 'Calendar'}
               </button>
+              <button className='toggle-discord-button' onClick={toggleDiscordPanel}>
+                {showDiscordPanel ? 'Cancel' : 'Discord'}
+                </button>
               <button><Logout /></button>
               <p>{message && <p>{message}</p>}</p>
             </>
@@ -335,11 +343,16 @@ const Home = () => {
               ref={calendarRef} // Pass ref to CalendarComponentttt
               events={events}
               onDateChange={handleDateChange}
-            />
+            />  
           </div>
         </div>
+        <div className='sticky-discord'>
+      <WidgetBotComponent />
+      </div>
       </div>
     </div>
+    
+    
   );
 };
 

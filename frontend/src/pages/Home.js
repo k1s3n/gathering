@@ -279,7 +279,7 @@ const Home = () => {
           <h1>Gatherings</h1>
           <input
             type="search"
-            placeholder="Search for gatherings, locations or dates"
+            placeholder="Search for gatherings, locations and dates 'DD/MM/YYYY'"
             value={searchQuery}
             onChange={handleSearchChange}
             onClick={handleSearchFieldClick} // Clear search query on click

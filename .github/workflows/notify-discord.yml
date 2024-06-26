@@ -45,7 +45,7 @@ jobs:
             **Commit Message**: ${{ env.COMMIT_MESSAGE }}
             **Author**: ${{ env.AUTHOR_NAME }}
             **Changes**: ${{ env.CHANGES }}
-            ${{ env.PR_URL != '' && format('**Pull Request URL**: {0}', env.PR_URL) }}
+            ${{ env.PR_URL && format('\n**Pull Request URL**: {0}', env.PR_URL) }}
 
       - name: Notify Discord on failure
         if: failure()
@@ -57,4 +57,4 @@ jobs:
             **Commit Message**: ${{ env.COMMIT_MESSAGE }}
             **Author**: ${{ env.AUTHOR_NAME }}
             **Changes**: ${{ env.CHANGES }}
-            ${{ env.PR_URL != '' && format('**Pull Request URL**: {0}', env.PR_URL) }}
+            ${{ env.PR_URL && format('\n**Pull Request URL**: {0}', env.PR_URL) }}

@@ -23,8 +23,15 @@ jobs:
         id: author_name
         run: echo "AUTHOR_NAME=$(git log -1 --pretty=format:'%an')" >> $GITHUB_ENV
 
-      - name: Set branch name
-        run: echo "BRANCH_NAME=${{ github.ref }}" >> $GITHUB_ENV
+      - name: Set event context
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            echo "PR_URL=${{ github.event.pull_request.html_url }}" >> $GITHUB_ENV
+            echo "AFFECTED_BRANCH=${{ github.event.pull_request.base.ref }}" >> $GITHUB_ENV
+          else
+            echo "PR_URL=" >> $GITHUB_ENV
+            echo "AFFECTED_BRANCH=${{ github.ref }}" >> $GITHUB_ENV
+          fi
 
       - name: Check for changes
         id: check_changes
@@ -36,15 +43,7 @@ jobs:
             echo "CHANGES=$(cat changed_files.txt)" >> $GITHUB_ENV
           fi
 
-      - name: Set event context
-        run: |
-          if [ "${{ github.event_name }}" == "pull_request" ]; then
-            echo "PR_URL=${{ github.event.pull_request.html_url }}" >> $GITHUB_ENV
-          else
-            echo "PR_URL=" >> $GITHUB_ENV
-          fi
-
-      - name: Generate URLs to changes
+      - name: Set changed files URLs
         if: ${{ steps.check_changes.outputs.CHANGES != 'No changes detected' }}
         id: generate_urls
         run: |
@@ -64,12 +63,10 @@ jobs:
             **Build Status**: SUCCESS
             **Commit Message**: ${{ env.COMMIT_MESSAGE }}
             **Author**: ${{ env.AUTHOR_NAME }}
-            **Branch**: ${{ env.BRANCH_NAME }}
-            **Changes**:
-            ${{ env.CHANGES }}
-            ${{ env.PR_URL && format('\n**Pull Request URL**: {0}', env.PR_URL) }}
+            **Affected Branch**: ${{ env.AFFECTED_BRANCH }}
             **Changed Files**:
             ${{ env.CHANGES_URLS }}
+            ${{ env.PR_URL && format('\n**Pull Request URL**: {0}', env.PR_URL) }}
 
       - name: Notify Discord on failure
         if: failure()
@@ -80,9 +77,7 @@ jobs:
             **Build Status**: FAILURE
             **Commit Message**: ${{ env.COMMIT_MESSAGE }}
             **Author**: ${{ env.AUTHOR_NAME }}
-            **Branch**: ${{ env.BRANCH_NAME }}
-            **Changes**:
-            ${{ env.CHANGES }}
-            ${{ env.PR_URL && format('\n**Pull Request URL**: {0}', env.PR_URL) }}
+            **Affected Branch**: ${{ env.AFFECTED_BRANCH }}
             **Changed Files**:
             ${{ env.CHANGES_URLS }}
+            ${{ env.PR_URL && format('\n**Pull Request URL**: {0}', env.PR_URL) }}

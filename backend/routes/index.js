@@ -22,7 +22,7 @@ router.get('/user/posts', authenticateToken, userController.getUserPosts);
 
 router.get('/comments/:eventId', userController.getComments);
 
-router.post('/comments/', authenticateToken, userController.createComment); // change
+router.post('/comments/', authenticateToken, userController.createComment); // changes
 
 
 // Define protected routes

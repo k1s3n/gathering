@@ -14,7 +14,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 console.log('MONGO_URI:', process.env.MONGO_URI); // Debug log to check if MONGO_URI is loaded
-console.log('JWT_SECRET:', process.env.JWT_SECRET); // Debug log to check if JWT_SECRET is loaded
+console.log('JWT_SECRET:', process.env.JWT_SECRET); // Debug log to check if JWT_SECRET is loaded easter
 
 mongoose.connect(process.env.MONGO_URI, { 
   useNewUrlParser: true, 

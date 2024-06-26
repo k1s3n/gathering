@@ -46,7 +46,8 @@ jobs:
         if: ${{ steps.changes.outputs.CHANGES != 'No changes detected' }}
         id: generate_urls
         run: |
-          URL_PREFIX="https://github.com/${{ github.repository }}/commit/${{ github.sha }} >> $GITHUB_ENV
+          URL_PREFIX="https://github.com/${{ github.repository }}/commit/${{ github.sha }}/files#diff-"
+          echo "URL_PREFIX=${URL_PREFIX}" >> $GITHUB_ENV
           CHANGES_URLS=""
           while IFS= read -r file; do
             CHANGES_URLS+="[${file}](${URL_PREFIX}${file})\n"

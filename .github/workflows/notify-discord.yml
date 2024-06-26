@@ -25,8 +25,8 @@ jobs:
 
       - name: Get changes
         id: changes
-        run: echo "CHANGES=$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }})" >> $GITHUB_ENV
-
+        run: echo "CHANGES=$(git diff --name-only ${{ github.sha }}^ ${{ github.sha }})" >> $GITHUB_ENV
+      
       - name: Set event context
         run: |
           if [ "${{ github.event_name }}" == "pull_request" ]; then

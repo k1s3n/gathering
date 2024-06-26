@@ -39,7 +39,7 @@ jobs:
         with:
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK_URL }}
           message: |
-            **Build Status**: **<font color="green">**\*\*SUCCESS\*\***</font>
+            **Build Status**: <font color="green">**SUCCESS**</font>
             **Commit Message**: ${{ env.COMMIT_MESSAGE }}
             **Author**: ${{ env.AUTHOR_NAME }}
             **Affected Branch**: ${{ env.AFFECTED_BRANCH }}
@@ -52,7 +52,7 @@ jobs:
         with:
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK_URL }}
           message: |
-            **Build Status**: **<font color="red">**\*\*FAILURE\*\***</font>
+            **Build Status**:<font color="red">**FAILURE**</font>
             **Commit Message**: ${{ env.COMMIT_MESSAGE }}
             **Author**: ${{ env.AUTHOR_NAME }}
             **Affected Branch**: ${{ env.AFFECTED_BRANCH }}

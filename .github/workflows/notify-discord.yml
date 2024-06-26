@@ -33,18 +33,52 @@ jobs:
             echo "AFFECTED_BRANCH=${{ github.ref }}" >> $GITHUB_ENV
           fi
 
-      - name: Notify Discord on success 
+      - name: List changed files
+        id: list_files
+        run: |
+          git diff --name-only ${{ github.sha }}^..${{ github.sha }} > changed_files.txt
+          echo "AFFECTED_FILES=$(cat changed_files.txt)" >> $GITHUB_ENV
+
+      - name: Notify Discord on success
         if: success()
         uses: discord-actions/message@v2
         with:
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK_URL }}
           message: |
-            **Build Status**: **\*\*SUCCESS\*\***
-            **Commit Message**: ${{ env.COMMIT_MESSAGE }}
-            **Author**: ${{ env.AUTHOR_NAME }}
-            **Affected Branch**: ${{ env.AFFECTED_BRANCH }}
-            **Commit URL**: [View commit](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
-            ${{ env.PR_URL && format('\n**Pull Request URL**: {0}', env.PR_URL) }}
+            {
+              "embeds": [
+                {
+                  "title": "Build Status: **SUCCESS**",
+                  "color": 65280,
+                  "fields": [
+                    {
+                      "name": "Commit Message",
+                      "value": "${{ env.COMMIT_MESSAGE }}"
+                    },
+                    {
+                      "name": "Author",
+                      "value": "${{ env.AUTHOR_NAME }}"
+                    },
+                    {
+                      "name": "Affected Branch",
+                      "value": "${{ env.AFFECTED_BRANCH }}"
+                    },
+                    {
+                      "name": "Affected Files",
+                      "value": "${{ env.AFFECTED_FILES }}"
+                    },
+                    {
+                      "name": "Commit URL",
+                      "value": "[View commit](https://github.com/${{ github.repository }}/commit/${{ github.sha }})"
+                    },
+                    {
+                      "name": "Pull Request URL",
+                      "value": "${{ env.PR_URL }}"
+                    }
+                  ]
+                }
+              ]
+            }
 
       - name: Notify Discord on failure
         if: failure()
@@ -52,9 +86,37 @@ jobs:
         with:
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK_URL }}
           message: |
-            **Build Status**:**\*\*FAILURE\*\***
-            **Commit Message**: ${{ env.COMMIT_MESSAGE }}
-            **Author**: ${{ env.AUTHOR_NAME }}
-            **Affected Branch**: ${{ env.AFFECTED_BRANCH }}
-            **Commit URL**: [View commit](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
-            ${{ env.PR_URL && format('\n**Pull Request URL**: {0}', env.PR_URL) }}
+            {
+              "embeds": [
+                {
+                  "title": "Build Status: **FAILURE**",
+                  "color": 14177041,
+                  "fields": [
+                    {
+                      "name": "Commit Message",
+                      "value": "${{ env.COMMIT_MESSAGE }}"
+                    },
+                    {
+                      "name": "Author",
+                      "value": "${{ env.AUTHOR_NAME }}"
+                    },
+                    {
+                      "name": "Affected Branch",
+                      "value": "${{ env.AFFECTED_BRANCH }}"
+                    },
+                    {
+                      "name": "Affected Files",
+                      "value": "${{ env.AFFECTED_FILES }}"
+                    },
+                    {
+                      "name": "Commit URL",
+                      "value": "[View commit](https://github.com/${{ github.repository }}/commit/${{ github.sha }})"
+                    },
+                    {
+                      "name": "Pull Request URL",
+                      "value": "${{ env.PR_URL }}"
+                    }
+                  ]
+                }
+              ]
+            }

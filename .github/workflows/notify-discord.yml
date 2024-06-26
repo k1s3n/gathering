@@ -5,7 +5,7 @@ on:
     branches:
       - main
   pull_request:
-    types: [opened, synchronize, reopened]      
+    types: [opened, synchronize, reopened]
 
 jobs:
   notify-discord:
@@ -19,6 +19,22 @@ jobs:
         id: commit_message
         run: echo "COMMIT_MESSAGE=$(git log -1 --pretty=format:'%s')" >> $GITHUB_ENV
 
+      - name: Get author name
+        id: author_name
+        run: echo "AUTHOR_NAME=$(git log -1 --pretty=format:'%an')" >> $GITHUB_ENV
+
+      - name: Get changes
+        id: changes
+        run: echo "CHANGES=$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }})" >> $GITHUB_ENV
+
+      - name: Set event context
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            echo "PR_URL=${{ github.event.pull_request.html_url }}" >> $GITHUB_ENV
+          else
+            echo "PR_URL=" >> $GITHUB_ENV
+          fi
+
       - name: Notify Discord on success
         if: success()
         uses: discord-actions/message@v2
@@ -27,7 +43,9 @@ jobs:
           message: |
             **Build Status**: SUCCESS
             **Commit Message**: ${{ env.COMMIT_MESSAGE }}
-            **Pull Request URL**: ${{ github.event.pull_request.html_url }}
+            **Author**: ${{ env.AUTHOR_NAME }}
+            **Changes**: ${{ env.CHANGES }}
+            ${{ env.PR_URL != '' && format('**Pull Request URL**: {0}', env.PR_URL) }}
 
       - name: Notify Discord on failure
         if: failure()
@@ -37,4 +55,6 @@ jobs:
           message: |
             **Build Status**: FAILURE
             **Commit Message**: ${{ env.COMMIT_MESSAGE }}
-            **Pull Request URL**: ${{ github.event.pull_request.html_url }}
+            **Author**: ${{ env.AUTHOR_NAME }}
+            **Changes**: ${{ env.CHANGES }}
+            ${{ env.PR_URL != '' && format('**Pull Request URL**: {0}', env.PR_URL) }}

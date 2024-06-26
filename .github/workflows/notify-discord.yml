@@ -33,12 +33,6 @@ jobs:
             echo "AFFECTED_BRANCH=${{ github.ref }}" >> $GITHUB_ENV
           fi
 
-      - name: List changed files
-        id: list_files
-        run: |
-          git diff --name-only ${{ github.sha }}^..${{ github.sha }} > changed_files.txt
-          echo "AFFECTED_FILES=$(cat changed_files.txt)" >> $GITHUB_ENV
-
       - name: Notify Discord on success 
         if: success()
         uses: discord-actions/message@v2
@@ -48,9 +42,9 @@ jobs:
             **Build Status**: SUCCESS
             **Commit Message**: ${{ env.COMMIT_MESSAGE }}
             **Author**: ${{ env.AUTHOR_NAME }}
+
             **Affected Branch**: ${{ env.AFFECTED_BRANCH }}
-            **Affected Files**:
-            ${{ env.AFFECTED_FILES }}
+
             **Commit URL**: [View commit](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
             ${{ env.PR_URL && format('\n**Pull Request URL**: {0}', env.PR_URL) }}
 
@@ -63,8 +57,9 @@ jobs:
             **Build Status**: FAILURE
             **Commit Message**: ${{ env.COMMIT_MESSAGE }}
             **Author**: ${{ env.AUTHOR_NAME }}
+
+
             **Affected Branch**: ${{ env.AFFECTED_BRANCH }}
-            **Affected Files**:
-            ${{ env.AFFECTED_FILES }}
+            
             **Commit URL**: [View commit](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
             ${{ env.PR_URL && format('\n**Pull Request URL**: {0}', env.PR_URL) }}

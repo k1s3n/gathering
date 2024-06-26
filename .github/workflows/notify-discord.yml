@@ -26,8 +26,8 @@ jobs:
       - name: Get changes
         id: changes
         run: |
-          git diff --name-only ${{ github.sha }}^ ${{ github.sha }} > changed_files.txt
-          if [ -s changed_files.txt ]; then
+          if git show --name-only --pretty=format: --no-patch ${{ github.sha }}^1 > /dev/null 2>&1; then
+            git diff --name-only ${{ github.sha }}^1 ${{ github.sha }} > changed_files.txt
             echo "CHANGES=$(cat changed_files.txt)" >> $GITHUB_ENV
           else
             echo "CHANGES=No changes detected" >> $GITHUB_ENV
@@ -61,7 +61,8 @@ jobs:
             **Build Status**: SUCCESS
             **Commit Message**: ${{ env.COMMIT_MESSAGE }}
             **Author**: ${{ env.AUTHOR_NAME }}
-            **Changes**:${{ env.CHANGES }}
+            **Changes**:
+            ${{ env.CHANGES }}
             ${{ env.PR_URL && format('\n**Pull Request URL**: {0}', env.PR_URL) }}
             ${{ env.CHANGES_URLS }}
 
@@ -74,6 +75,7 @@ jobs:
             **Build Status**: FAILURE
             **Commit Message**: ${{ env.COMMIT_MESSAGE }}
             **Author**: ${{ env.AUTHOR_NAME }}
-            **Changes**:${{ env.CHANGES }}
+            **Changes**:
+            ${{ env.CHANGES }}
             ${{ env.PR_URL && format('\n**Pull Request URL**: {0}', env.PR_URL) }}
             ${{ env.CHANGES_URLS }}

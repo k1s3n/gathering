@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 // MongoDB connection URL - using environment variable
-const mongoURI = process.env.MONGODB_URI || 'mongodb://admin:password@localhost:27017/gathering?authSource=admin';
+const mongoURI = process.env.MONGODB_URI || 'mongodb://admin:password@locahost:27017/gathering?authSource=admin';
 
 // Function to connect to MongoDB
 async function connectToMongoDB() {

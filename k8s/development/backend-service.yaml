@@ -5,9 +5,9 @@ metadata:
   name: backend-service
   namespace: development
 spec:
-  type: ClusterIP
+  type: LoadBalancer # or ClusterIP
   selector:
-    app: backend
+    app: backend 
   ports:
     - protocol: TCP
       port: 4000

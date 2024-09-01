@@ -1,15 +1,14 @@
-# frontend-service.yaml
 apiVersion: v1
 kind: Service
 metadata:
   name: frontend-service
   namespace: development
 spec:
-  type: NodePort
+  type: LoadBalancer # or NodePort
   selector:
     app: frontend
   ports:
-    - protocol: TCP
-      port: 80  # This is the port the service will expose
-      targetPort: 3000  # This is the port your React app listens on
-      nodePort: 30000  # Only needed for NodePort; choose a port between 30000-32767
+    - port: 80
+      targetPort: 3000
+      # if spec is NodePort then "nodePort: 30000"
+      

@@ -8,7 +8,7 @@ pipeline {
         }
         stage('Test') {
             steps {
-                // Eventuella tester
+                sh 'echo "No tests specified yet"'
             }
         }
         stage('Deploy') {

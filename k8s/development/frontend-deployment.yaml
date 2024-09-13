@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: muschan/gathering-frontend:latest # Byt ut till ditt Docker Hub repository
+        image: muschan/gathering-frontend:latest
         ports:
         - containerPort: 3000

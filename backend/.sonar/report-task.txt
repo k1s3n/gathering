@@ -1,0 +1,6 @@
+projectKey=backend-gathering
+serverUrl=http://localhost:9000
+serverVersion=10.6.0.92116
+dashboardUrl=http://localhost:9000/dashboard?id=backend-gathering
+ceTaskId=d0cf857c-bb6c-46f4-9e04-e79ca5ab57ec
+ceTaskUrl=http://localhost:9000/api/ce/task?id=d0cf857c-bb6c-46f4-9e04-e79ca5ab57ec

@@ -1,0 +1,8 @@
+# For Prometheus (values.yaml)
+server:
+  service:
+    type: NodePort
+
+# For Grafana (values.yaml)
+service:
+  type: NodePort

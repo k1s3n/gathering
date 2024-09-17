@@ -1,0 +1,10 @@
+# values.yaml for Prometheus
+server:
+  resources:
+    limits:
+      memory: 512Mi
+      cpu: 500m
+
+# values.yaml for Grafana
+adminUser: admin
+adminPassword: securepassword

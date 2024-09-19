@@ -135,3 +135,6 @@ dist
 
 # sonarlint
 .sonarlint
+.scannerwork
+terraform
+backup
